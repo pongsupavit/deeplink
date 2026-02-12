@@ -41,3 +41,6 @@ http://localhost:8000
 
 ## Credit
 - QR Code library: `qrcodejs` by davidshimjs (MIT License)
+
+## Repository
+- https://github.com/pongsupavit/deeplink
