@@ -327,6 +327,19 @@ const handleShare = async () => {
 
   try {
     await navigator.clipboard.writeText(url.toString());
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Deeplink Testing Tool",
+          text: "Test this deeplink:",
+          url: url.toString()
+        });
+        setStatus("Share sheet opened.", "Ready", "ready");
+        return;
+      } catch (err) {
+        if (err && err.name === "AbortError") return;
+      }
+    }
     setStatus("Share URL copied. Send it to a friend to test.", "Ready", "ready");
   } catch {
     setStatus("Clipboard access was blocked by the browser.", "Error", "error");
