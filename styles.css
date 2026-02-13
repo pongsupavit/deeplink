@@ -126,9 +126,6 @@ html[data-theme="dark"] {
   /* Interactions Constants Overrides if any */
 }
 
-html[data-theme="light"] {
-  /* Values are defined in :root as default */
-}
 
 * {
   box-sizing: border-box;
@@ -415,7 +412,7 @@ body.is-reordering .input-wrap {
 }
 
 .links-list:not(.is-multi) .link-row {
-  grid-template-columns: minmax(0, 1fr) var(--drag-width) var(--action-width);
+  grid-template-columns: minmax(0, 1fr) var(--action-width);
 }
 
 .field.is-view .links-list.is-multi .link-row {
@@ -448,7 +445,7 @@ body.is-reordering .input-wrap {
 }
 
 .links-list:not(.is-multi) .link-remove {
-  grid-column: 3;
+  grid-column: 2;
 }
 
 .links-list.is-multi .link-index {

@@ -51,7 +51,7 @@ export const getSystemTheme = () => (window.matchMedia("(prefers-color-scheme: d
 
 export const getPreferredTheme = () => {
     const saved = localStorage.getItem("theme");
-    return (saved === "light" || saved === "dark" || saved === "auto") ? saved : "auto";
+    return (saved === "light" || saved === "dark" || saved === "auto") ? saved : "light";
 };
 
 export const applyTheme = (theme) => {
