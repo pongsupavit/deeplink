@@ -22,12 +22,6 @@
    - **บน Desktop**: คลิกเพื่อเปิด QR Code แล้วใช้มือถือสแกน
 4. **แชร์**: กดปุ่มแชร์ที่มุมขวาบนเพื่อส่ง URL ที่รวมลิงก์ทั้งหมดให้เพื่อนร่วมงาน
 
-## 🛠 Tech Stack
-- **Core**: Vanilla JavaScript (ES Modules)
-- **Styling**: Vanilla CSS (Custom properties & CSS Grid)
-- **Libraries**: `qrcodejs` (Lazy-loaded for better performance)
-- **Architecture**: No-build system, run directly in any modern browser
-
 ## 📜 Credit
 - QR Code library: `qrcodejs` by davidshimjs (MIT License)
 
