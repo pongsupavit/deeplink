@@ -75,6 +75,7 @@ const toggleEditMode = () => {
         window.history.replaceState({}, "", url.toString());
 
         setStatus("Updated.", "Ready", "ready");
+        trackEvent("ga_save_link", { count: values.length });
         updateState('editMode', false);
     } else {
         updateState('editMode', true);
