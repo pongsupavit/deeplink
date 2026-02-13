@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pongsupavit.github.io/deeplink/sitemap.xml
