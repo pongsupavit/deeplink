@@ -28,9 +28,6 @@ export const addLinkRow = (prefill = "", index = -1) => {
         list.appendChild(row);
     }
 
-    list.classList.add("is-multi");
-    if (DOM.field()) DOM.field().classList.add("is-multi");
-
     const inputEl = row.querySelector(".link-url");
     autosizeTextarea(inputEl);
     if (prefill) {
@@ -123,8 +120,13 @@ export const refreshUI = () => {
     const hasAnyValue = inputs.some(i => i.value.trim().length > 0);
     const editMode = state.editMode;
 
+    // Update Multi-link state
+    const isMulti = rows.length > 1;
+    DOM.linksList().classList.toggle("is-multi", isMulti);
+    if (DOM.field()) DOM.field().classList.toggle("is-multi", isMulti);
+
     // Update Link Numbers & Reorder state
-    const canReorder = editMode && rows.length > 1;
+    const canReorder = editMode && isMulti;
     DOM.linksList().classList.toggle("is-reorder", canReorder);
     rows.forEach((row, index) => {
         row.dataset.index = String(index);
@@ -202,10 +204,6 @@ export const removeRow = (row) => {
     }
 
     row.remove();
-    if (getRows().length <= 1) {
-        DOM.linksList().classList.remove("is-multi");
-        if (DOM.field()) DOM.field().classList.remove("is-multi");
-    }
     if (!getLinkInputs().some(i => i.value.trim().length > 0)) {
         updateState('hadInputValue', false);
     }

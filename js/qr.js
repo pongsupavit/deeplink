@@ -1,6 +1,43 @@
 import { DOM } from './constants.js';
 import { renderIcons } from './ui.js';
 
+let loadingPromise = null;
+const CDN_URL = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
+
+/**
+ * Lazy-loads the QRCode library only when needed
+ */
+const loadLibrary = () => {
+    if (window.QRCode) return Promise.resolve();
+    if (loadingPromise) return loadingPromise;
+
+    loadingPromise = new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = CDN_URL;
+        script.async = true;
+        script.onload = resolve;
+        script.onerror = () => {
+            loadingPromise = null;
+            reject(new Error("QR library failed to load"));
+        };
+        document.head.appendChild(script);
+    });
+    return loadingPromise;
+};
+
+/**
+ * Wraps the external library's rendering logic
+ */
+const renderQR = (el, value, size = 220) => {
+    if (!window.QRCode) throw new Error("QRCode library not loaded");
+    return new window.QRCode(el, {
+        text: value,
+        width: size,
+        height: size,
+        correctLevel: window.QRCode.CorrectLevel.M
+    });
+};
+
 export const addQrPadding = (pad = 16) => {
     const canvasElement = DOM.qrCanvas();
     const img = canvasElement.querySelector("img");
@@ -43,9 +80,9 @@ export const openQrModal = async (value, title, displayText, setStatus) => {
         const qrTitle = DOM.qrTitle();
         const qrText = DOM.qrText();
 
-        await window.QR_LIB.load();
+        await loadLibrary();
         qrCanvas.innerHTML = "";
-        window.QR_LIB.render(qrCanvas, value, { size: 220 });
+        renderQR(qrCanvas, value, 220);
         addQrPadding(16);
         if (qrTitle) qrTitle.textContent = title || "Scan to test";
         qrText.textContent = displayText || value;
@@ -60,7 +97,8 @@ export const openQrModal = async (value, title, displayText, setStatus) => {
         renderIcons(qrModal);
         qrModal.classList.add("is-open");
         qrModal.setAttribute("aria-hidden", "false");
-    } catch {
+    } catch (e) {
+        console.error(e);
         setStatus("QR code library failed to load.", "Error", "error");
     }
 };
@@ -90,7 +128,8 @@ export const downloadQrCode = async () => {
     document.body.appendChild(tempContainer);
 
     try {
-        await window.QR_LIB.render(tempContainer, url, { size: qrSize });
+        await loadLibrary();
+        renderQR(tempContainer, url, qrSize);
 
         // Wait for potential internal canvas/img to be ready
         const source = tempContainer.querySelector("canvas") || tempContainer.querySelector("img");
@@ -134,4 +173,5 @@ export const downloadQrCode = async () => {
         document.body.removeChild(tempContainer);
     }
 };
+
 

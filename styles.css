@@ -36,7 +36,7 @@
   --action-width: 40px;
 
   /* Glass Effects */
-  --glass-bg: rgba(15, 23, 42, 0.04);
+  --glass-bg: rgba(255, 255, 255, 0.04);
   --glass-border: rgba(15, 23, 42, 0.08);
 
   /* Shadows */
@@ -387,22 +387,7 @@ body.is-reordering .input-wrap {
   display: block;
 }
 
-.link-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  margin-top: 12px;
-  background: transparent;
-  justify-self: center;
-}
 
-.link-indicator[data-state="valid"] {
-  background: var(--success);
-}
-
-.link-indicator[data-state="invalid"] {
-  background: var(--error);
-}
 
 
 .link-row.is-valid .link-url {
@@ -668,14 +653,16 @@ textarea {
 
 .link-indicator {
   position: absolute;
-  right: 8px;
-  top: calc(var(--row-height) / 2);
+  right: 12px;
+  top: 20px;
+  /* (padding-top 8px) + (line-height 24px / 2) */
   transform: translateY(-50%);
   width: 8px;
   height: 8px;
   border-radius: 999px;
   background: transparent;
   pointer-events: none;
+  z-index: 2;
 }
 
 .link-indicator[data-state="valid"] {

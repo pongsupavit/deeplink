@@ -25,7 +25,7 @@ export const isValidUriScheme = (value) => {
 
     // For deep links, we usually expect scheme://path
     if (value.startsWith(`${scheme}://`)) {
-        return value.length > scheme.length + 3;
+        return value.length >= scheme.length + 3;
     }
 
     // Also support scheme:path (like tel: or mailto:)
