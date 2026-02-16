@@ -1,4 +1,5 @@
-import { tryFetchWithProxies, checkDNS } from './api.js';
+import { fetchBundleFromWorker, checkDNS, tryFetchWithProxies } from './api.js';
+import { CONFIG } from './config.js';
 import { analyzeCommon, analyzeIOS, analyzeAndroid, extractIOSApps, extractAndroidApps } from './validator.js';
 import { DOM, renderLoading, renderError, buildCommonHTML, buildResultHTML, buildRawJSONSection } from './ui.js';
 
@@ -24,17 +25,106 @@ const handleValidate = async () => {
     const aasaUrl = `https://${domain}/.well-known/apple-app-site-association`;
     const assetLinksUrl = `https://${domain}/.well-known/assetlinks.json`;
 
-    const [dnsRes, iosRes, androidRes] = await Promise.allSettled([
-        checkDNS(domain),
-        tryFetchWithProxies(aasaUrl),
-        tryFetchWithProxies(assetLinksUrl)
-    ]);
+    const isNetworkReset = (message) => {
+        if (!message) return false;
+        return message.includes('ERR_CONNECTION_CLOSED') || message.includes('ERR_CONNECTION_RESET');
+    };
 
-    validationResults.dns = dnsRes.status === 'fulfilled' ? dnsRes.value : { success: false, error: 'DNS lookup failed', code: 'PROMISE_REJECTED' };
-    validationResults.ios = iosRes.status === 'fulfilled' ? { ...iosRes.value, url: aasaUrl } : { error: iosRes.reason.message, url: aasaUrl };
-    validationResults.android = androidRes.status === 'fulfilled' ? { ...androidRes.value, url: assetLinksUrl } : { error: androidRes.reason.message, url: androidRes.reason.message };
+    const isNetworkOrTimeout = (message) => {
+        if (!message) return false;
+        return (
+            isNetworkReset(message) ||
+            message.includes('Failed to fetch') ||
+            message.includes('NetworkError') ||
+            message.includes('AbortError') ||
+            message.includes('timeout') ||
+            message.includes('All promises were rejected')
+        );
+    };
 
-    renderResults();
+    const extractErrorMessages = (reason) => {
+        if (!reason) return [];
+        if (reason.errors && Array.isArray(reason.errors)) {
+            return reason.errors.map(e => e?.message).filter(Boolean);
+        }
+        if (reason.message) return [reason.message];
+        return [];
+    };
+
+    try {
+        if (CONFIG?.IS_DEBUG) console.log('[Validator] Start checks', domain);
+        const [dnsRes, iosRes, androidRes] = await Promise.allSettled([
+            checkDNS(domain),
+            tryFetchWithProxies(aasaUrl),
+            tryFetchWithProxies(assetLinksUrl)
+        ]);
+
+        validationResults.dns = dnsRes.status === 'fulfilled' ? dnsRes.value : { success: false, error: 'DNS lookup failed', code: 'PROMISE_REJECTED' };
+        validationResults.ios = iosRes.status === 'fulfilled' ? { ...iosRes.value, url: aasaUrl } : { error: iosRes.reason.message, url: aasaUrl };
+        validationResults.android = androidRes.status === 'fulfilled'
+            ? { ...androidRes.value, url: assetLinksUrl }
+            : { error: androidRes.reason.message, url: assetLinksUrl };
+
+        const anyRejected = [iosRes, androidRes, dnsRes].some(r => r.status === 'rejected');
+        const anyNetworkReset = [iosRes, androidRes, dnsRes].some(r => r.status === 'rejected' && isNetworkReset(r.reason?.message));
+        const dnsFailed = !!validationResults.dns?.error;
+        const iosFailed = !!validationResults.ios?.error;
+        const androidFailed = !!validationResults.android?.error;
+        const anyNetworkOrTimeout = [iosRes, androidRes, dnsRes].some(r => {
+            if (r.status !== 'rejected') return false;
+            const messages = extractErrorMessages(r.reason);
+            return messages.some(isNetworkOrTimeout);
+        });
+        const shouldFallback = anyRejected || anyNetworkOrTimeout || anyNetworkReset || dnsFailed || iosFailed || androidFailed;
+
+        if (shouldFallback) {
+            if (CONFIG?.IS_DEBUG) {
+                console.log('[Validator] Fallback to worker bundle', {
+                    domain,
+                    anyRejected,
+                    anyNetworkReset,
+                    anyNetworkOrTimeout,
+                    dnsFailed,
+                    iosFailed,
+                    androidFailed,
+                    dnsStatus: validationResults.dns?.success,
+                    iosError: validationResults.ios?.error || null,
+                    androidError: validationResults.android?.error || null
+                });
+            }
+            const bundle = await fetchBundleFromWorker(domain);
+            const dns = bundle?.dns || { success: false, error: 'DNS lookup failed', code: 'BUNDLE_MISSING' };
+            const iosBundle = bundle?.ios || { success: false, error: 'AASA fetch failed' };
+            const androidBundle = bundle?.android || { success: false, error: 'Assetlinks fetch failed' };
+
+            validationResults.dns = dns;
+            validationResults.ios = iosBundle.success
+                ? { ...iosBundle, url: aasaUrl, proxyName: 'My Worker' }
+                : { error: iosBundle.error || 'AASA fetch failed', url: aasaUrl };
+            validationResults.android = androidBundle.success
+                ? { ...androidBundle, url: assetLinksUrl, proxyName: 'My Worker' }
+                : { error: androidBundle.error || 'Assetlinks fetch failed', url: assetLinksUrl };
+        }
+
+        if (CONFIG?.IS_DEBUG) {
+            console.log('[Validator] Checks success', {
+                domain,
+                dns: validationResults.dns?.success,
+                ios: !validationResults.ios.error,
+                android: !validationResults.android.error,
+                dnsProvider: validationResults.dns?.provider || 'unknown',
+                iosProxy: validationResults.ios?.proxyName || 'unknown',
+                androidProxy: validationResults.android?.proxyName || 'unknown'
+            });
+        }
+
+        renderResults();
+    } catch (e) {
+        validationResults.dns = { success: false, error: e.message || 'Worker bundle failed', code: 'BUNDLE_FAILED' };
+        validationResults.ios = { error: 'Worker bundle failed', url: aasaUrl };
+        validationResults.android = { error: 'Worker bundle failed', url: assetLinksUrl };
+        renderResults();
+    }
 };
 
 const renderResults = () => {
@@ -49,12 +139,6 @@ const renderResults = () => {
             ${buildCommonHTML(commonChecks)}
         </div>
     `;
-
-    // If DNS failed, skip specific platform checks
-    if (!validationResults.dns.success) {
-        DOM.resultArea.innerHTML = html;
-        return;
-    }
 
     html += `<div class="results-grid">
             <div class="platform-column">

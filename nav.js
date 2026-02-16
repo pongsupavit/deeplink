@@ -16,7 +16,11 @@
             <nav class="global-nav">
                 <div class="global-nav__content">
                     <a href="${config.resolvePath('')}" class="global-nav__logo">
-                        <span>⚡️</span> Deeplink Tools
+                        <span class="global-nav__logo-emoji">⚡️</span>
+                        <span class="global-nav__brand">
+                            <span class="global-nav__brand-title">Deeplink Tools</span>
+                            <span class="global-nav__brand-subtitle">Essential utilities for mobile deep linking development</span>
+                        </span>
                     </a>
                     <div class="global-nav__right" style="display: flex; align-items: center;">
                         <div class="global-nav__links">

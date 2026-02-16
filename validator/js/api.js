@@ -1,10 +1,30 @@
 import { CONFIG } from './config.js';
 
+const debug = (...args) => {
+    if (CONFIG.IS_DEBUG) console.log(...args);
+};
+
+const DOH_PROVIDERS = [
+    { name: 'Google DoH', url: (domain) => `https://dns.google/resolve?name=${domain}&type=A`, headers: {} },
+    { name: 'Cloudflare DoH', url: (domain) => `https://cloudflare-dns.com/dns-query?name=${domain}&type=A`, headers: { 'accept': 'application/dns-json' } }
+];
+
+const parseJsonLoose = (rawContent) => {
+    try {
+        return JSON.parse(rawContent);
+    } catch (e) {
+        const jsonMatch = rawContent.match(/\[[\s\S]*\]|\{[\s\S]*\}/);
+        if (jsonMatch) return JSON.parse(jsonMatch[0]);
+        throw new Error('No valid JSON found');
+    }
+};
+
 export const fetchFromProxy = async (proxy, targetUrl, timeout) => {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
 
     try {
+        debug('[Validator] Trying proxy', proxy.name, targetUrl);
         let rawContent;
         let responseMeta = { contentType: 'unknown', redirected: false };
 
@@ -26,19 +46,11 @@ export const fetchFromProxy = async (proxy, targetUrl, timeout) => {
 
         if (!rawContent) throw new Error('Empty response');
 
-        // Handle Base64
         if (rawContent.startsWith('data:') && rawContent.includes('base64,')) {
             rawContent = atob(rawContent.split('base64,')[1]);
         }
 
-        let json;
-        try {
-            json = JSON.parse(rawContent);
-        } catch (e) {
-            const jsonMatch = rawContent.match(/\[[\s\S]*\]|\{[\s\S]*\}/);
-            if (jsonMatch) json = JSON.parse(jsonMatch[0]);
-            else throw new Error('No valid JSON found');
-        }
+        const json = parseJsonLoose(rawContent);
 
         return { json, responseMeta, proxyName: proxy.name };
     } finally {
@@ -48,36 +60,43 @@ export const fetchFromProxy = async (proxy, targetUrl, timeout) => {
 
 export const checkDNS = async (domain) => {
     const startTime = Date.now();
-    try {
-        const resp = await fetch(`https://cloudflare-dns.com/dns-query?name=${domain}&type=A`, {
-            headers: { 'accept': 'application/dns-json' }
-        });
-        const data = await resp.json();
-        const duration = Date.now() - startTime;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUTS.FREE_PROXY);
 
+    const providerPromises = DOH_PROVIDERS.map((provider) => (async () => {
+        debug('[Validator] DNS provider', provider.name, domain);
+        const resp = await fetch(provider.url(domain), { headers: provider.headers, signal: controller.signal });
+        const data = await resp.json();
         if (data.Answer && data.Answer.length > 0) {
-            return {
-                success: true,
-                ip: data.Answer[0].data,
-                duration: duration
-            };
+            return { provider: provider.name, ip: data.Answer[0].data };
         }
-        return { success: false, error: 'No A records found', code: 'NXDOMAIN' };
+        throw new Error(`${provider.name} no A records`);
+    })());
+
+    try {
+        const result = await Promise.any(providerPromises);
+        const duration = Date.now() - startTime;
+        return { success: true, ip: result.ip, duration, provider: result.provider };
     } catch (e) {
-        return { success: false, error: e.message, code: 'FETCH_ERROR' };
+        const duration = Date.now() - startTime;
+        if (controller.signal.aborted) {
+            return { success: false, error: 'DNS timeout', code: 'TIMEOUT', duration };
+        }
+        return { success: false, error: 'Failed to fetch', code: 'FETCH_ERROR', duration };
+    } finally {
+        clearTimeout(timeoutId);
     }
 };
 
-export const tryFetchWithProxies = async (targetUrl) => {
-    try {
-        return await Promise.any(CONFIG.PROXIES.map(p => fetchFromProxy(p, targetUrl, CONFIG.TIMEOUTS.FREE_PROXY)));
-    } catch (e) {
-        console.log(`Free proxies failed for ${targetUrl}, falling back to worker...`);
-    }
+export const fetchBundleFromWorker = async (domain) => {
+    if (!CONFIG.MY_PROXY_URL) throw new Error('Worker URL not configured');
+    debug('[Validator] Worker bundle', domain);
+    const resp = await fetch(`${CONFIG.MY_PROXY_URL}?url=${encodeURIComponent(domain)}`);
+    if (!resp.ok) throw new Error('Worker bundle fetch failed');
+    return await resp.json();
+};
 
-    if (CONFIG.MY_PROXY_URL) {
-        const workerProxy = { name: 'My Worker (Backup)', type: 'simple', url: (target) => `${CONFIG.MY_PROXY_URL}?url=${encodeURIComponent(target)}` };
-        return await fetchFromProxy(workerProxy, targetUrl, CONFIG.TIMEOUTS.WORKER_PROXY);
-    }
-    throw new Error('All proxies failed');
+export const tryFetchWithProxies = async (targetUrl) => {
+    debug('[Validator] Free proxy race start', targetUrl);
+    return await Promise.any(CONFIG.PROXIES.map(p => fetchFromProxy(p, targetUrl, CONFIG.TIMEOUTS.FREE_PROXY)));
 };

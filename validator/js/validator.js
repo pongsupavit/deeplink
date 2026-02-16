@@ -79,13 +79,16 @@ export const analyzeIOS = (json, appPrefix, bundleId, meta, url) => {
     });
 
     const validMimes = ['application/json', 'application/pkcs7-mime', 'text/plain'];
-    const isMimeValid = validMimes.some(m => meta.contentType?.includes(m));
+    const contentType = meta.contentType || 'unknown';
+    const isMimeValid = validMimes.some(m => contentType.includes(m));
+    const isUnknown = contentType === 'unknown';
+    const isPkcs7 = contentType.includes('application/pkcs7-mime');
 
     results.push({
         title: 'MIME Type',
-        text: `Content-Type: <code>${meta.contentType || 'unknown'}</code>. Apple prefers application/json.`,
-        error: !isMimeValid && meta.contentType !== 'unknown',
-        warning: meta.contentType === 'unknown'
+        text: `Content-Type: <code>${contentType}</code>. Apple prefers application/json.`,
+        error: !isMimeValid && !isUnknown,
+        warning: isUnknown || isPkcs7
     });
 
     const hasAppLinks = !!json.applinks;
