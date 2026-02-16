@@ -1,107 +1,103 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Deeplink Testing Tool</title>
-  <meta name="description"
-    content="Deeplink Testing Tool for URI Schemes, App Links, and Universal Links. Test and validate deeplinks across platforms." />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://pongsupavit.github.io/deeplink" />
-  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
-  <meta property="og:type" content="website" />
-  <meta property="og:title" content="Deeplink Testing Tool" />
-  <meta property="og:description"
-    content="Deeplink Testing Tool for URI Schemes, App Links, and Universal Links. Test and validate deeplinks across platforms." />
-  <meta property="og:image" content="image.png" />
-  <meta property="og:url" content="https://pongsupavit.github.io/deeplink" />
-  <meta property="og:site_name" content="Deeplink Testing Tool" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Deeplink Testing Tool" />
-  <meta name="twitter:description"
-    content="Deeplink Testing Tool for URI Schemes, App Links, and Universal Links. Test and validate deeplinks across platforms." />
-  <meta name="twitter:image" content="image.png" />
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9FPRXDMJJC"></script>
-  <script src="ga.js" defer></script>
-  <link rel="stylesheet" href="styles.css" />
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "Deeplink Testing Tool",
-      "description": "Deeplink Testing Tool for URI Schemes, App Links, and Universal Links. Test and validate deeplinks across platforms.",
-      "applicationCategory": "DeveloperApplication",
-      "operatingSystem": "All",
-      "url": "https://pongsupavit.github.io/deeplink"
-    }
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deeplink Tools</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="stylesheet" href="theme.css">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9FPRXDMJJC"></script>
+    <script src="ga.js" defer></script>
+    <style>
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: var(--container-width);
+            width: 100%;
+        }
+
+        .tool-card {
+            background: var(--card);
+            padding: 32px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            text-decoration: none;
+            color: var(--ink);
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+            gap: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.15);
+            border-color: var(--accent);
+        }
+
+        .tool-icon {
+            font-size: 3.5rem;
+            margin-bottom: 8px;
+        }
+
+        .tool-title {
+            font-weight: 700;
+            font-size: 1.4rem;
+            font-family: var(--font-heading);
+        }
+
+        .tool-desc {
+            font-size: 0.95rem;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
-  <main class="wrap">
-    <header>
-      <div class="header-text">
-        <h1>Deeplink Testing Tool</h1>
-        <p class="subtle">Supports URI Scheme, App Link, and Universal Link.</p>
-      </div>
-      <div class="header-actions">
-        <button id="forwardShareBtn" class="forward-callout" type="button" aria-label="Forward this page">
-          <span class="forward-icon" aria-hidden="true" data-icon="FORWARD"></span>
-          <span class="forward-text">Forward this page</span>
-        </button>
-      </div>
-    </header>
+    <script src="/constants.js"></script>
+    <script src="/nav.js"></script>
+    <script src="/footer.js"></script>
 
-    <div class="field">
-      <div class="status-row">
-        <div class="status" id="status">Please input testing link</div>
-        <button id="pageEditBtn" class="page-edit-btn" type="button" aria-label="Edit" data-icon="EDIT"></button>
-      </div>
-      <div id="linksList" class="links-list">
-        <!-- Rows are dynamically generated -->
-      </div>
+    <main class="wrap">
+        <header>
+            <div class="header-text">
+                <div class="logo-row">
+                    <span class="logo-emoji">⚡️</span>
+                    <h1>Deeplink Tools</h1>
+                </div>
+                <p class="subtle">Essential utilities for mobile deep linking development.</p>
+            </div>
+        </header>
 
-      <div class="add-row">
-        <button id="addLinkBtn" class="secondary add-link-btn" type="button" aria-label="Add another link">
-          <span class="add-link-icon" aria-hidden="true" data-icon="ADD"></span>
-          Add another link
-        </button>
-      </div>
-  </main>
-  </div>
+        <div class="tools-grid">
+            <a href="/testing/" class="tool-card">
+                <span class="tool-icon">📱</span>
+                <span class="tool-title">Link Tester</span>
+                <span class="tool-desc">Test deep links on real devices via QR code.<br>Supports Universal Links & App
+                    Links.</span>
+            </a>
 
-  <footer>
-    <div class="footer-content">
-      <div class="theme-select" role="group" aria-label="Theme selection">
-        <button class="theme-option" data-theme="light" title="Light Mode" aria-label="Switch to Light mode"
-          data-icon="THEME_LIGHT"></button>
-        <button class="theme-option" data-theme="auto" title="System Theme" aria-label="Use system theme">
-          <span>Auto</span>
-        </button>
-        <button class="theme-option" data-theme="dark" title="Dark Mode" aria-label="Switch to Dark mode"
-          data-icon="THEME_DARK"></button>
-      </div>
-    </div>
-  </footer>
-
-  <div id="qrModal" class="qr-modal" role="dialog" aria-labelledby="qrTitle" aria-hidden="true">
-    <div class="qr-backdrop"></div>
-    <div class="qr-content">
-      <h2 id="qrTitle">Scan to test</h2>
-      <div id="qrCanvas" class="qr-canvas"></div>
-      <p id="qrText" class="qr-text"></p>
-      <div class="qr-actions">
-        <button id="qrDownload" class="qr-download icon-btn" aria-label="Download QR Code">
-          <span data-icon="DOWNLOAD"></span>
-        </button>
-        <button id="qrClose" class="qr-close" aria-label="Close modal">Close</button>
-      </div>
-    </div>
-  </div>
-
-  <script type="module" src="js/main.js"></script>
+            <a href="/validator/" class="tool-card">
+                <span class="tool-icon">🔗</span>
+                <span class="tool-title">Validator</span>
+                <span class="tool-desc">Validate AASA & Asset Links configuration.<br>Debug domain verification
+                    issues.</span>
+            </a>
+        </div>
+    </main>
 </body>
 
 </html>

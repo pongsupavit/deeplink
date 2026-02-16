@@ -234,7 +234,7 @@ export const openLink = (inputEl) => {
         return;
     }
 
-    trackEvent("ga_click_link", { type: validation.type });
+    trackEvent("testing_link_click", { type: validation.type });
     const row = inputEl.closest(".link-row");
     const index = row ? Number(row.dataset.index || "0") : 0;
     const label = `Link ${index + 1}`;

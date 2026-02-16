@@ -17,7 +17,7 @@ const handleShare = async () => {
     values.forEach((v, i) => url.searchParams.set(`link${i + 1}`, v));
 
     try {
-        trackEvent("ga_share_link");
+        trackEvent("testing_page_share");
         await navigator.clipboard.writeText(url.toString());
         if (navigator.share && !window.matchMedia("(min-width: 700px)").matches) {
             await navigator.share({ url: url.toString() }).catch(e => { if (e.name !== 'AbortError') throw e; });
@@ -75,7 +75,7 @@ const toggleEditMode = () => {
         window.history.replaceState({}, "", url.toString());
 
         setStatus("Updated.", "Ready", "ready");
-        trackEvent("ga_save_link", { count: values.length });
+        trackEvent("testing_link_save", { count: values.length });
         updateState('editMode', false);
     } else {
         updateState('editMode', true);

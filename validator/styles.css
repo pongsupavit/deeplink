@@ -1,0 +1,427 @@
+/* Theme variables are now imported from ../theme.css */
+
+* {
+    box-sizing: border-box;
+}
+
+
+
+.card {
+    background: var(--card);
+    padding: 24px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.form-row label {
+    font-weight: var(--weight-medium);
+    font-size: 0.9375rem;
+    /* Specific size. keeping? */
+    color: var(--muted);
+    text-align: left;
+    padding-right: 0;
+    margin-bottom: 4px;
+}
+
+/* Mobile Main Styles are now default. */
+
+/* .form-row label removed from here as it is redefined above */
+
+.form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 8px;
+    padding-left: 0;
+}
+
+.secondary-btn {
+    background: var(--card);
+    color: var(--ink);
+    border: 1px solid var(--border);
+    padding: 0 20px;
+    height: 44px;
+    border-radius: 10px;
+    font-weight: var(--weight-medium);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.primary-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    min-width: 120px;
+    height: 44px;
+    border-radius: 10px;
+    font-weight: 600;
+    /* Keeping as bold/semibold */
+    font-size: var(--text-base);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.primary-btn:hover {
+    filter: brightness(1.1);
+}
+
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 14px 16px;
+    /* Adjusted padding-right since validator might not have the clear button inside yet, or we keep it 40px if we plan to add it */
+    padding-right: 40px;
+    /* Keeping consistent with testing tool */
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--ink);
+    font-size: var(--text-base);
+    outline: none;
+    transition: border 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--focus-ring);
+    /* Assuming focus-ring is defined in theme.css or we need to add it */
+}
+
+.input-hint {
+    margin: 8px 0 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.loading-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+}
+
+.spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--accent-soft);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.external-links {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.tool-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: var(--weight-medium);
+    font-size: 0.9375rem;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    transition: all 0.2s;
+}
+
+.tool-link:hover {
+    background: var(--accent);
+    color: white;
+}
+
+
+
+@media (min-width: 481px) {
+    .input-group {
+        flex-direction: row;
+    }
+
+    .primary-btn {
+        padding: 0 20px;
+    }
+}
+
+/* Checklist Styles (Matches Screenshot) */
+.check-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--success);
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    font-size: 0.9375rem;
+    color: var(--ink);
+    border-radius: 10px;
+}
+
+.check-item.is-error {
+    border-left-color: var(--error);
+    background: rgba(185, 28, 28, 0.03);
+    /* error-glow subtle */
+}
+
+.check-item.is-warning {
+    border-left-color: #f59e0b;
+    /* Warning Orange */
+    background: rgba(245, 158, 11, 0.03);
+}
+
+.check-header {
+    margin-bottom: 4px;
+    color: var(--ink);
+}
+
+.check-body {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.4;
+}
+
+.check-body code {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: var(--text-xs);
+}
+
+.result-summary {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 0 4px;
+}
+
+.summary-text {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--muted);
+}
+
+.summary-text strong {
+    color: var(--ink);
+}
+
+.check-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    color: var(--success);
+}
+
+.analysis-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Extracted App List Styles */
+.app-extraction-section {
+    margin-top: 24px;
+    padding: 20px;
+    background: #fdfdfd;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.extraction-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.team-group {
+    margin-bottom: 20px;
+}
+
+.team-group:last-child {
+    margin-bottom: 0;
+}
+
+.team-id-label {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.team-id-bullet {
+    color: var(--muted);
+    margin-right: 8px;
+}
+
+.bundle-id-list {
+    list-style: none;
+    padding-left: 24px;
+    margin: 0;
+}
+
+.bundle-id-item {
+    margin-bottom: 8px;
+    display: block;
+    /* เปลี่ยนจาก flex เป็น block เพื่อให้ตัดบรรทัดได้อิสระ */
+}
+
+.bundle-id-tag {
+    background: var(--bg);
+    color: var(--ink);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    display: inline-block;
+    line-height: 1.4;
+}
+
+/* JSON Textarea Style */
+.json-textarea {
+    width: 100%;
+    height: 300px;
+    padding: 16px;
+    background: var(--card);
+    /* Ensure it sits well on whatever background */
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--ink);
+    resize: vertical;
+    outline: none;
+    box-shadow: none;
+    transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.json-textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+/* Result Layout */
+.results-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin-top: 32px;
+}
+
+.platform-column {
+    min-width: 0;
+}
+
+.platform-header {
+    font-size: 1.25rem;
+    font-weight: var(--weight-bold);
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--ink);
+}
+
+.platform-icon {
+    font-size: 1.5rem;
+}
+
+@media (min-width: 901px) {
+    .results-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Desktop overrides for general layout */
+@media (min-width: 641px) {
+    h1 {
+        font-size: var(--font-h1-desktop);
+    }
+
+    .form-row {
+        grid-template-columns: 200px 1fr;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .form-row label {
+        text-align: right;
+        padding-right: 12px;
+        margin-bottom: 0;
+    }
+}
+
+/* Copy Button Styles */
+.platform-column {
+    min-width: 0;
+    position: relative;
+    /* For absolute positioning of copy button */
+}
+
+.copy-btn {
+    position: absolute;
+    top: 36px;
+    /* Adjust based on header height */
+    right: 8px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: var(--weight-medium);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+    background: var(--card);
+    z-index: 10;
+}
+
+.copy-btn:hover {
+    background: var(--bg);
+    color: var(--ink);
+    border-color: var(--muted);
+}
+
+.copy-btn.copied {
+    background: var(--success);
+    color: white;
+    border-color: var(--success);
+}

@@ -1,29 +1,49 @@
-# Deeplink Testing Tool 🔗
+# Deeplink Tools 🛠️
 
-เครื่องมือทดสอบ Deeplink ระดับมืออาชีพที่ใช้งานง่ายและรวดเร็ว รองรับทั้ง **URI Scheme**, **App Link**, และ **Universal Link** ออกแบบมาเพื่อให้ทีม Developer และ QA สามารถแชร์และทดสอบลิงก์บนมือถือได้ทันทีโดยไม่ต้องพิมพ์เอง
+A collection of developer tools to simplify the development, testing, and debugging of **Deep Links**, **Universal Links (iOS)**, and **App Links (Android)**.
 
-[ลองใช้งานได้ที่นี่](https://pongsupavit.github.io/deeplink)
+Designed for mobile developers and QA teams to streamline the workflow of testing deep links and validating configuration files.
 
-## ✨ ฟีเจอร์หลัก
-- **Multiple Links Support**: เพิ่มลิงก์ทดสอบได้หลายตัวในหน้าเดียว
-- **Smart Validation**: ตรวจสอบรูปแบบลิงก์อัตโนมัติ (รองรับ `myapp://`, `ads://`, และ URL ปกติ)
-- **Interactive UI**: เปลี่ยนจากช่องกรอกเป็น "ปุ่มกด" ทันทีเมื่อลิงก์ถูกต้อง เพื่อลดความสับสน
-- **Desktop-to-Mobile Workflow**: บน Desktop จะแสดง QR Code ให้สแกนเปิดบนมือถือได้เลย
-- **High-Res QR Download**: ดาวน์โหลด QR Code ความละเอียดสูง (1000x1000px) สำหรับใช้ในเอกสารหรือสไลด์
-- **Drag & Drop Reordering**: จัดลำดับลิงก์ได้ง่ายๆ เพียงแค่ลากวาง
-- **Undo Support**: เผลอลบลิงก์? กด `Cmd+Z` หรือ `Ctrl+Z` เพื่อเรียกคืนได้ทันที
-- **Responsive Theme**: รองรับ Light, Dark และ Auto Mode (System preference)
+## 🧰 Tools Included
 
-## 🚀 วิธีใช้งาน
-1. **ใส่ลิงก์**: กรอกลิงก์ที่ต้องการทดสอบในช่อง (เพิ่มได้หลายช่องผ่านปุ่ม `Add another link`)
-2. **ปรับแต่ง**: ลากเพื่อเปลี่ยนลำดับ หรือแก้ไขได้ทุกเมื่อ
-3. **ทดสอบ**: 
-   - **บนมือถือ**: คลิกที่ปุ่มสีน้ำเงินเพื่อเปิดแอปทันที
-   - **บน Desktop**: คลิกเพื่อเปิด QR Code แล้วใช้มือถือสแกน
-4. **แชร์**: กดปุ่มแชร์ที่มุมขวาบนเพื่อส่ง URL ที่รวมลิงก์ทั้งหมดให้เพื่อนร่วมงาน
+### 1. [Deeplink Testing Tool](./testing/README.md) 🔗
+A web-based tool to quickly test URI schemes and Universal Links on real devices.
+- **Features**: Multi-link support, QR code generation for mobile testing, and link history.
+- **Try it**: [Launch Testing Tool](./testing/)
 
-## 📜 Credit
-- QR Code library: `qrcodejs` by davidshimjs (MIT License)
+### 2. [Deeplink Validator](./validator/README.md) ✅
+A validator for `apple-app-site-association` (AASA) and `assetlinks.json` files.
+- **Features**: Checks HTTPS, redirects, MIME types, and JSON syntax. Simulates Apple/Google bot scraping behavior.
+- **Try it**: [Launch Validator](./validator/)
+
+## 🚀 Getting Started
+
+These tools are static web applications and can be hosted on GitHub Pages or any static hosting service.
+
+### Local Development
+To run the tools locally:
+
+1. Clone the repository
+   ```bash
+   git clone https://github.com/pongsupavit/deeplink.git
+   ```
+
+2. Serve the project
+   ```bash
+   # Using Python 3
+   python3 -m http.server 8000
+   
+   # Using npx (serve)
+   npx serve .
+   ```
+
+3. Open in browser
+   - **Root**: `http://localhost:8000/`
+   - **Testing Tool**: `http://localhost:8000/testing/`
+   - **Validator**: `http://localhost:8000/validator/`
+
+## 🤝 Contributing
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ---
 Developed by [Pongsupavit](https://github.com/pongsupavit)

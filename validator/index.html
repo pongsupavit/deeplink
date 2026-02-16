@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Deeplink Validator - Universal Links & App Links Checker</title>
+<meta name="description"
+    content="Validate Apple App Site Association (AASA) and Android Asset Links files. Debug Universal Links and App Links configuration instantly." />
+<meta name="keywords"
+    content="Deeplink Validator, AASA Validator, Apple App Site Association, Universal Links, Android App Links, Asset Links, Deep Link Validator" />
+<meta name="author" content="Pongsupavit" />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://pongsupavit.github.io/deeplink-validator/" />
+<meta property="og:title" content="Deeplink Validator - Universal Links & App Links Checker" />
+<meta property="og:description"
+    content="Validate Apple App Site Association (AASA) and Android Asset Links files. Debug Universal Links and App Links configuration instantly." />
+<meta property="og:image" content="https://pongsupavit.github.io/deeplink/validator/deeplink-validator-cover.png" />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content="https://pongsupavit.github.io/deeplink-validator/" />
+<meta property="twitter:title" content="Deeplink Validator - Universal Links & App Links Checker" />
+<meta property="twitter:description"
+    content="Validate Apple App Site Association (AASA) and Android Asset Links files. Debug Universal Links and App Links configuration instantly." />
+<meta property="twitter:image"
+    content="https://pongsupavit.github.io/deeplink/validator/deeplink-validator-cover.png" />
+<meta property="twitter:image:alt" content="Deeplink Validator Tool Cover Image showing supported features." />
+
+<link rel="canonical" href="https://pongsupavit.github.io/aasa-validator/" />
+<link rel="icon" href="../favicon.svg" />
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9FPRXDMJJC"></script>
+<script src="../ga.js"></script>
+<link rel="stylesheet" href="../theme.css">
+<link rel="stylesheet" href="styles.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+    <script src="/constants.js"></script>
+    <script src="/nav.js"></script>
+    <script src="/footer.js"></script>
+    <main class="wrap">
+        <header>
+            <div class="header-text">
+                <div class="logo-row">
+                    <span class="logo-emoji">🔗</span>
+                    <h1>Deep Link Validator</h1>
+                </div>
+                <p class="subtle">Check your AASA and Asset Links files for Universal Links & App Links.</p>
+            </div>
+        </header>
+
+        <div class="card search-card">
+            <div class="form-grid">
+                <div class="form-row">
+                    <label for="domainInput">Domain / Web Page</label>
+                    <input type="text" id="domainInput" placeholder="example.com" autocomplete="off" spellcheck="false">
+                </div>
+                <div class="form-row">
+                    <label for="prefixInput">iOS App Prefix</label>
+                    <input type="text" id="prefixInput" placeholder="Team ID (Optional)" autocomplete="off"
+                        spellcheck="false">
+                </div>
+                <div class="form-row">
+                    <label for="bundleInput">iOS Bundle ID</label>
+                    <input type="text" id="bundleInput" placeholder="com.company.app (Optional)" autocomplete="off"
+                        spellcheck="false">
+                </div>
+                <div class="form-row">
+                    <label for="packageInput">Android Package</label>
+                    <input type="text" id="packageInput" placeholder="com.company.app (Optional)" autocomplete="off"
+                        spellcheck="false">
+                </div>
+                <div class="form-actions">
+                    <button id="validateBtn" class="primary-btn">TEST</button>
+                    <div id="resultsDropdown" class="results-dropdown hidden">
+                        <button class="secondary-btn">RESULTS <svg width="12" height="12" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="resultArea" class="result-area hidden">
+            <!-- Results will be injected here -->
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Fetching AASA from domain...</p>
+            </div>
+        </div>
+
+
+    </main>
+
+
+
+    <script type="module" src="js/main.js"></script>
+</body>
+
+</html>

@@ -1,164 +1,70 @@
-:root {
-  /* Light Theme (Default) */
-  --bg: #f6f7fb;
-  --card: #ffffff;
-  --page: #ffffff;
-  --ink: #0f172a;
-  --muted: #475569;
-  --accent: #2563eb;
-  --ring: rgba(25, 64, 149, 0.25);
-  --border: rgba(15, 23, 42, 0.12);
-
-  /* Theme Switcher Overrides (Light Mode) */
-  --theme-btn-bg: transparent;
-  --theme-active-bg: rgba(15, 23, 42, 0.08);
-  /* Light Gray */
-  --theme-active-ink: var(--ink);
-
-  /* Semantic Status Colors */
-  --success: #15803d;
-  --success-glow: rgba(22, 163, 74, 0.1);
-  --error: #b91c1c;
-  --error-glow: rgba(220, 38, 38, 0.1);
-  --working: #1d4ed8;
-  --working-glow: rgba(37, 99, 235, 0.1);
-
-  /* Layout & Sizing */
-  --input-pad-y: 8px;
-  --input-line: 24px;
-  --row-height: calc(var(--input-pad-y) * 2 + var(--input-line));
-  --baseline-offset: var(--input-pad-y);
-  --action-single: 40px;
-  --index-width: 60px;
-  --drag-icon-size: 16px;
-  --delete-icon-size: 18px;
-  --drag-width: 16px;
-  --action-width: 40px;
-
-  /* Glass Effects */
-  --glass-bg: rgba(255, 255, 255, 0.04);
-  --glass-border: rgba(15, 23, 42, 0.08);
-
-  /* Shadows */
-  --shadow-drag: rgba(15, 23, 42, 0.12);
-  --shadow-qr: rgba(15, 23, 42, 0.1);
-
-  /* QR Modal */
-  --qr-bg: #ffffff;
-  --qr-text: #0f172a;
-  --qr-canvas-bg: #ffffff;
-  --qr-backdrop: rgba(15, 23, 42, 0.25);
-
-  /* Focus */
-  --focus-ring: rgba(37, 99, 235, 0.4);
-
-  /* Interaction & Component Overrides */
-  --btn-hover-filter: brightness(0.9);
-  --secondary-hover-bg: rgba(15, 23, 42, 0.06);
-  --secondary-hover-border: rgba(15, 23, 42, 0.2);
-  --secondary-active-bg: rgba(15, 23, 42, 0.12);
-  --secondary-active-border: rgba(15, 23, 42, 0.3);
-  --locked-bg: var(--accent);
-
-  /* Button System - Primary (Solid) */
-  --btn-pri-bg: var(--accent);
-  --btn-pri-ink: #ffffff;
-
-  /* Button System - Secondary (Outline) */
-  --btn-sec-bg: #ffffff;
-  --btn-sec-ink: var(--ink);
-  --btn-sec-border: var(--border);
-
-  /* Button System - Danger */
-  --btn-dmg-hover-bg: var(--error);
-  --btn-dmg-hover-ink: #ffffff;
-
-  /* Interactions Constants */
-  --hover-y: -1px;
-  --hover-shadow: 0 3px 10px var(--ring);
-  --active-y: 0;
-  --transition-fast: 0.15s ease;
-  --transition-normal: 0.2s ease;
-}
-
-html[data-theme="dark"] {
-  /* Dark Theme Overrides */
-  --bg: #0b0f14;
-  --card: #0f141b;
-  --page: #0f141b;
-  --ink: #e6edf3;
-  --muted: #8b98a5;
-  --accent: #3b82f6;
-  --ring: rgba(59, 130, 246, 0.35);
-  --border: rgba(148, 163, 184, 0.18);
-
-  --success: #16a34a;
-  --error: #dc2626;
-  --working: #2563eb;
-
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(148, 163, 184, 0.1);
-
-  --shadow-drag: rgba(0, 0, 0, 0.3);
-  --shadow-qr: rgba(0, 0, 0, 0.2);
-
-  --qr-bg: #1e293b;
-  --qr-text: #f8fafc;
-  --qr-backdrop: rgba(15, 23, 42, 0.45);
-
-  --focus-ring: rgba(59, 130, 246, 0.5);
-
-  --btn-hover-filter: brightness(1.2);
-  --secondary-hover-bg: rgba(148, 163, 184, 0.12);
-  --secondary-hover-border: rgba(148, 163, 184, 0.3);
-  --secondary-active-bg: rgba(148, 163, 184, 0.2);
-  --secondary-active-border: rgba(148, 163, 184, 0.45);
-  --locked-bg: color-mix(in srgb, var(--accent) 90%, #ffffff 10%);
-
-  /* Button System - Secondary (Outline) Overrides for Dark */
-  --btn-sec-bg: transparent;
-
-  /* Theme Switcher Overrides (Dark Mode) */
-  --theme-btn-bg: transparent;
-  --theme-active-bg: rgba(255, 255, 255, 0.15);
-  --theme-active-ink: #ffffff;
-
-  /* Interactions Constants Overrides if any */
-}
+/* Theme variables are now imported from ../theme.css */
 
 
 * {
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans", sans-serif;
+
+
+.logo-emoji {
+  font-size: 1.5rem;
+}
+
+
+
+/* Card Style */
+.card {
+  background: var(--card);
+  padding: 24px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.tool-card {
+  padding: 24px;
+}
+
+/* Button & Input Fixes */
+.secondary-btn {
+  background: var(--card);
   color: var(--ink);
-  min-height: 100vh;
-  background: var(--page);
-  display: block;
-  padding: 0;
+  border: 1px solid var(--border);
+  padding: 0 20px;
+  height: 44px;
+  border-radius: 10px;
+  font-weight: var(--weight-medium);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.wrap {
-  width: 100%;
-  max-width: 100%;
-  background: var(--page);
-  border: none;
-  border-radius: 0;
-  padding: 20px 16px 28px;
-  box-shadow: none;
-  margin: 0;
+.secondary-btn:hover {
+  background: var(--bg);
+  border-color: var(--muted);
 }
 
-header {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: start;
-  column-gap: 12px;
-  row-gap: 6px;
-  margin-bottom: 16px;
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 0;
+  /* Remove bottom margin */
+}
+
+/* Status Row */
+.status-row {
+  margin-bottom: 8px;
+}
+
+.status {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 10px;
 }
 
 .header-actions {
@@ -195,72 +101,32 @@ header {
   display: inline;
 }
 
+/* Tablet / Desktop Styles */
+@media (min-width: 481px) {
+  h1 {
+    font-size: var(--font-h1-desktop);
+  }
+
+  .logo-emoji {
+    font-size: inherit;
+    /* Reset or set to larger if needed */
+  }
+
+  .tool-card {
+    padding: 32px;
+  }
+}
+
 /* Footer & Status Styling */
-footer {
-  width: 100%;
-  border-top: 1px solid var(--border);
-  padding: 32px 0;
-  margin-top: auto;
-}
+/* Footer moved to global via nav.js */
 
-.footer-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
-.theme-select {
-  display: flex;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  padding: 4px;
-  border-radius: 12px;
-  gap: 4px;
-}
-
-.theme-option {
-  background: var(--theme-btn-bg);
-  color: var(--ink);
-  border: 1px solid var(--border);
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-}
-
-.theme-option:hover,
-.theme-option:focus-visible {
-  transform: translateY(var(--hover-y));
-  box-shadow: var(--hover-shadow);
-  border-color: var(--ring);
-}
-
-.theme-option:active {
-  transform: translateY(var(--active-y));
-}
-
-button.theme-option[aria-pressed="true"] {
-  background: var(--theme-active-bg) !important;
-  color: var(--theme-active-ink) !important;
-  border-color: var(--border);
-}
-
-.theme-option svg {
-  width: 18px;
-  height: 18px;
-  display: block;
-}
 
 h1 {
   margin: 0;
   font-size: 1.2rem;
   font-weight: 600;
+  /* Keeping local override 600 */
   line-height: 1.2;
 }
 
@@ -272,7 +138,7 @@ h1 {
 .subtle {
   margin: 0;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
 }
 
 .field {
@@ -333,9 +199,10 @@ body.is-reordering .input-wrap {
   box-sizing: border-box;
   line-height: var(--input-line);
   user-select: none;
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   opacity: 0.8;
   font-size: 0.85rem;
+  /* Keeping specific size for index */
 }
 
 .link-row.is-dragging .link-index {
@@ -452,44 +319,16 @@ body.is-reordering .input-wrap {
   display: flex;
   min-width: var(--index-width);
   text-align: left;
-  font-weight: 500;
+  font-weight: var(--weight-medium);
   color: var(--muted);
   font-size: 0.85rem;
   line-height: var(--input-line);
 }
 
-
-.page-edit-btn {
-  height: var(--row-height);
-  width: 40px;
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--btn-sec-bg);
-  color: var(--btn-sec-ink);
-  border: 1px solid var(--btn-sec-border);
-  border-radius: 10px;
-  transition: all var(--transition-fast);
-}
-
-.page-edit-btn:hover {
-  transform: translateY(var(--hover-y));
-  box-shadow: var(--hover-shadow);
-  border-color: var(--ring);
-}
-
-
-.page-edit-btn svg {
-  width: 18px;
-  height: 18px;
-  display: block;
-}
-
 .link-error {
   grid-column: 2;
   margin: 4px 0 0;
-  font-size: 0.8rem;
+  font-size: var(--text-xs);
   color: var(--error);
   display: none;
 }
@@ -577,7 +416,9 @@ body.is-reordering .input-wrap {
   gap: 8px;
   color: var(--ink);
   padding: 9px 12px;
+  /* Standardized Font Family is inherited from body */
   font-size: 0.82rem;
+  /* Specific size */
   width: 100%;
   justify-content: center;
 }
@@ -600,7 +441,9 @@ textarea {
   border: 1px solid var(--border);
   background: transparent;
   color: var(--ink);
-  font-size: 1rem;
+  font-family: var(--font-main);
+  /* Standardized Font */
+  font-size: var(--text-base);
   outline: none;
   transition: border var(--transition-normal), box-shadow var(--transition-normal), background var(--transition-normal), color var(--transition-normal), transform var(--transition-fast);
 }
@@ -611,7 +454,7 @@ textarea {
   border-color: transparent !important;
   cursor: pointer;
   box-shadow: 0 4px 12px var(--ring);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
 }
 
 .link-url.is-locked:hover {
@@ -686,7 +529,8 @@ button {
   padding: 12px 14px;
   border-radius: 10px;
   font-weight: 600;
-  font-size: 0.9rem;
+  /* Keeping 600 or change to bold/medium? Let's keep 600 or use bold. */
+  font-size: var(--text-sm);
   background: var(--accent);
   color: #ffffff;
   cursor: pointer;
@@ -753,7 +597,7 @@ button.secondary:active {
   background: transparent;
   border: 1px dashed var(--border);
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   min-height: 48px;
   display: block;
   line-height: 1.4;
@@ -949,26 +793,7 @@ button.secondary:active {
   filter: var(--btn-hover-filter);
 }
 
-@media (min-width: 700px) {
-  body {
-    display: block;
-    padding: 0;
-  }
 
-  header {
-    align-items: center;
-  }
-
-  .wrap {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 28px 24px 36px;
-  }
-
-  .qr-actions {
-    margin-top: 16px;
-  }
-}
 
 .links-list:not(.is-multi) .link-error {
   grid-column: 1;
