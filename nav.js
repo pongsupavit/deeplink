@@ -1,19 +1,23 @@
 // Navigation script loaded synchronously
 
 (function () {
-    // Dynamic base path detection (for GitHub Pages compatibility)
-    const isGitHubPages = window.location.hostname.includes('github.io');
-    const basePath = isGitHubPages ? '/deeplink/' : '/';
+    // Detect base path dynamically (e.g., '/' or '/deeplink/')
+    // If the path includes 'testing' or 'validator', we are in a subfolder
+    const currentPath = window.location.pathname;
+    const isSubdir = currentPath.includes('/testing/') || currentPath.includes('/validator/');
+
+    // Determine base from the script source or simple logic
+    // Since we know the structure, let's just use the current path to find the base
+    let base = '/';
+    if (currentPath.includes('/deeplink/')) {
+        base = '/deeplink/';
+    }
 
     const PATHS = {
-        root: basePath,
-        testing: `${basePath}testing/`,
-        validator: `${basePath}validator/`
+        root: base,
+        testing: base + 'testing/',
+        validator: base + 'validator/'
     };
-
-    // Determine current path depth to adjust links if needed (for relative paths)
-    // Assuming flat structure: root, /testing/, /validator/
-    // A simple approach is to use absolute paths since we are on the same domain.
 
     function injectNav() {
         // Don't inject if already exists
