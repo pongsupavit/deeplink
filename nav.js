@@ -1,10 +1,14 @@
 // Navigation script loaded synchronously
 
 (function () {
+    // Dynamic base path detection (for GitHub Pages compatibility)
+    const isGitHubPages = window.location.hostname.includes('github.io');
+    const basePath = isGitHubPages ? '/deeplink/' : '/';
+
     const PATHS = {
-        root: '/',
-        testing: '/testing/',
-        validator: '/validator/'
+        root: basePath,
+        testing: `${basePath}testing/`,
+        validator: `${basePath}validator/`
     };
 
     // Determine current path depth to adjust links if needed (for relative paths)
