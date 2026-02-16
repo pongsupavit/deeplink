@@ -20,8 +20,20 @@ window.GLOBAL_SVGS = {
     window.DEEPLINK_CONFIG = {
         base: base,
         tools: [
-            { id: 'testing', name: 'Tester', path: 'testing/' },
-            { id: 'validator', name: 'Validator', path: 'validator/' }
+            {
+                id: 'testing',
+                name: 'Tester',
+                path: 'testing/',
+                emoji: '📱',
+                description: 'Test deep links on real devices via QR code.<br>Supports Universal Links & App Links.'
+            },
+            {
+                id: 'validator',
+                name: 'Validator',
+                path: 'validator/',
+                emoji: '🔗',
+                description: 'Validate AASA & Asset Links configuration.<br>Debug domain verification issues.'
+            }
         ],
         resolvePath: function (relativePath) {
             // relativePath should be 'testing/' or '' for root

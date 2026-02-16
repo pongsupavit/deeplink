@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deeplink Tools</title>
+    <meta name="robots" content="index, follow" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="theme.css">
 
@@ -82,21 +83,25 @@
             </div>
         </header>
 
-        <div class="tools-grid">
-            <a href="/testing/" class="tool-card">
-                <span class="tool-icon">📱</span>
-                <span class="tool-title">Link Tester</span>
-                <span class="tool-desc">Test deep links on real devices via QR code.<br>Supports Universal Links & App
-                    Links.</span>
-            </a>
-
-            <a href="/validator/" class="tool-card">
-                <span class="tool-icon">🔗</span>
-                <span class="tool-title">Validator</span>
-                <span class="tool-desc">Validate AASA & Asset Links configuration.<br>Debug domain verification
-                    issues.</span>
-            </a>
+        <div class="tools-grid" id="toolsGrid">
+            <!-- Dynamically populated from DEEPLINK_CONFIG -->
         </div>
+
+        <script>
+            (function () {
+                const config = window.DEEPLINK_CONFIG;
+                const grid = document.getElementById('toolsGrid');
+                if (!config || !grid) return;
+
+                grid.innerHTML = config.tools.map(tool => `
+                    <a href="${config.resolvePath(tool.path)}" class="tool-card">
+                        <span class="tool-icon">${tool.emoji}</span>
+                        <span class="tool-title">${tool.name}</span>
+                        <span class="tool-desc">${tool.description}</span>
+                    </a>
+                `).join('');
+            })();
+        </script>
     </main>
 </body>
 

@@ -11,4 +11,4 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
-Sitemap: https://pongsupavit.github.io/deeplink/testing/sitemap.xml
+Sitemap: https://pongsupavit.github.io/deeplink/sitemap.xml
