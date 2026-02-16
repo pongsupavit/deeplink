@@ -1,38 +1,26 @@
 // Navigation script loaded synchronously
 
 (function () {
-    // Detect base path dynamically (e.g., '/' or '/deeplink/')
-    // If the path includes 'testing' or 'validator', we are in a subfolder
-    const currentPath = window.location.pathname;
-    const isSubdir = currentPath.includes('/testing/') || currentPath.includes('/validator/');
-
-    // Determine base from the script source or simple logic
-    // Since we know the structure, let's just use the current path to find the base
-    let base = '/';
-    if (currentPath.includes('/deeplink/')) {
-        base = '/deeplink/';
-    }
-
-    const PATHS = {
-        root: base,
-        testing: base + 'testing/',
-        validator: base + 'validator/'
-    };
+    const config = window.DEEPLINK_CONFIG;
+    if (!config) return console.error('DEEPLINK_CONFIG not found');
 
     function injectNav() {
         // Don't inject if already exists
         if (document.querySelector('.global-nav')) return;
 
+        const navLinksHTML = config.tools.map(tool => `
+            <a href="${config.resolvePath(tool.path)}" class="global-nav__link" data-path="${tool.id}">${tool.name}</a>
+        `).join('');
+
         const navHTML = `
             <nav class="global-nav">
                 <div class="global-nav__content">
-                    <a href="${PATHS.root}" class="global-nav__logo">
+                    <a href="${config.resolvePath('')}" class="global-nav__logo">
                         <span>⚡️</span> Deeplink Tools
                     </a>
                     <div class="global-nav__right" style="display: flex; align-items: center;">
                         <div class="global-nav__links">
-                            <a href="${PATHS.testing}" class="global-nav__link" data-path="testing">Tester</a>
-                            <a href="${PATHS.validator}" class="global-nav__link" data-path="validator">Validator</a>
+                            ${navLinksHTML}
                         </div>
                         <button class="global-nav__theme-btn" id="themeToggle" aria-label="Toggle Theme">
                             ${GLOBAL_SVGS.THEME_LIGHT}
@@ -52,8 +40,10 @@
     function highlightActiveLink() {
         const path = window.location.pathname;
         let activeKey = '';
-        if (path.includes('/testing/')) activeKey = 'testing';
-        else if (path.includes('/validator/')) activeKey = 'validator';
+
+        config.tools.forEach(tool => {
+            if (path.includes('/' + tool.path)) activeKey = tool.id;
+        });
 
         if (activeKey) {
             const link = document.querySelector(`.global-nav__link[data-path="${activeKey}"]`);
