@@ -1,219 +1,205 @@
 import { fetchBundleFromWorker, checkDNS, tryFetchWithProxies } from './api.js';
 import { CONFIG } from './config.js';
-import { analyzeCommon, analyzeIOS, analyzeAndroid, extractIOSApps, extractAndroidApps } from './validator.js';
-import { DOM, renderLoading, renderError, buildCommonHTML, buildResultHTML, buildRawJSONSection } from './ui.js';
+import {
+    analyzeCommon, analyzeIOS, analyzeAndroid,
+    extractIOSApps, extractAndroidApps
+} from './validator.js';
+import {
+    DOM, renderLoading, renderError,
+    buildCommonHTML, buildResultHTML, buildRawJSONSection
+} from './ui.js';
 
-let validationResults = { domain: '', ios: null, android: null, dns: null };
+// Central State
+const state = {
+    domain: '',
+    iosPrefix: '',
+    iosBundle: '',
+    androidPackage: '',
+    results: {
+        dns: null,
+        ios: null,
+        android: null
+    }
+};
 
+const resetState = (domain, prefix, bundle, pkg) => {
+    state.domain = domain;
+    state.iosPrefix = prefix;
+    state.iosBundle = bundle;
+    state.androidPackage = pkg;
+    state.results = { dns: null, ios: null, android: null };
+};
+
+/**
+ * Renders the final results to the DOM
+ */
+const renderResults = () => {
+    const aasaUrl = `https://${state.domain}/.well-known/apple-app-site-association`;
+    const assetLinksUrl = `https://${state.domain}/.well-known/assetlinks.json`;
+
+    const commonChecks = analyzeCommon(state.results.dns, state.domain, state.results.ios, state.results.android);
+
+    let html = `
+        <div class="results-header">
+            <h2>Results for <span>${state.domain}</span></h2>
+        </div>
+        
+        <div class="common-section">
+            ${buildCommonHTML(commonChecks)}
+        </div>
+        
+        <div class="results-grid">
+            <div class="platform-column">
+                <div class="platform-header">
+                    <span class="platform-icon">🍎</span>
+                    <span>iOS Validation</span>
+                </div>
+                ${state.results.ios?.error
+            ? renderError(state.results.ios.error, aasaUrl, true)
+            : buildResultHTML(aasaUrl, analyzeIOS(state.results.ios.json, state.iosPrefix, state.iosBundle, state.results.ios.responseMeta, aasaUrl), extractIOSApps(state.results.ios.json), 'iOS', state.iosBundle)
+        }
+            </div>
+            <div class="platform-column">
+                <div class="platform-header">
+                    <span class="platform-icon">🤖</span>
+                    <span>Android Validation</span>
+                </div>
+                ${state.results.android?.error
+            ? renderError(state.results.android.error, assetLinksUrl, true)
+            : buildResultHTML(assetLinksUrl, analyzeAndroid(state.results.android.json, state.androidPackage, state.results.android.responseMeta, assetLinksUrl), extractAndroidApps(state.results.android.json), 'Android', state.androidPackage)
+        }
+            </div>
+        </div>
+        
+        ${buildRawJSONSection(state.results.ios, state.results.android)}
+    `;
+
+    DOM.resultArea.innerHTML = html;
+};
+
+/**
+ * Executes the worker fallback logic to supplement missing results
+ */
+const performFallback = async (domain) => {
+    try {
+        const bundle = await fetchBundleFromWorker(domain);
+
+        // Merge worker results into state, prioritizing worker only for failed checks
+        if (!state.results.dns?.success) {
+            state.results.dns = bundle?.dns || { success: false, error: 'DNS lookup failed' };
+        }
+
+        if (state.results.ios?.error || !state.results.ios) {
+            state.results.ios = bundle?.ios?.success
+                ? {
+                    ...bundle.ios,
+                    responseMeta: {
+                        ...(bundle.ios.responseMeta || {}),
+                        contentType: bundle.ios.contentType || bundle.ios.responseMeta?.contentType || 'unknown',
+                        proxyName: 'Worker'
+                    }
+                }
+                : { error: bundle?.ios?.error || 'AASA fetch failed' };
+        }
+
+        if (state.results.android?.error || !state.results.android) {
+            state.results.android = bundle?.android?.success
+                ? {
+                    ...bundle.android,
+                    responseMeta: {
+                        ...(bundle.android.responseMeta || {}),
+                        contentType: bundle.android.contentType || bundle.android.responseMeta?.contentType || 'unknown',
+                        proxyName: 'Worker'
+                    }
+                }
+                : { error: bundle?.android?.error || 'Assetlinks fetch failed' };
+        }
+
+        renderResults();
+    } catch (workerErr) {
+        console.error('[Orchestrator] Worker Fallback Failure', workerErr);
+        state.results.dns = state.results.dns || { success: false, error: 'Connectivity failure' };
+        state.results.ios = state.results.ios || { error: 'Service Unavailable' };
+        state.results.android = state.results.android || { error: 'Service Unavailable' };
+        renderResults();
+    }
+};
+
+/**
+ * Main Orchestrator
+ */
 const handleValidate = async () => {
-    let input = DOM.domainInput.value.trim();
-    if (!input) {
-        alert("Please enter a domain or URL");
-        return;
-    }
+    const input = DOM.domainInput.value.trim().toLowerCase();
+    const domain = input.includes('://') ? new URL(input).hostname : input.split('/')[0];
+    if (!domain) return;
 
-    let domain = input.includes('://') ? new URL(input).hostname : input.split('/')[0];
-    domain = domain.replace(/\/$/, '').toLowerCase();
-    validationResults.domain = domain;
-
-    if (typeof window.gtag === 'function') {
-        window.gtag('event', 'validation_button_click', { domain: domain });
-    }
+    resetState(
+        domain,
+        DOM.prefixInput.value.trim(),
+        DOM.bundleInput.value.trim(),
+        DOM.packageInput.value.trim()
+    );
 
     renderLoading(domain);
 
     const aasaUrl = `https://${domain}/.well-known/apple-app-site-association`;
     const assetLinksUrl = `https://${domain}/.well-known/assetlinks.json`;
 
-    const isNetworkReset = (message) => {
-        if (!message) return false;
-        return message.includes('ERR_CONNECTION_CLOSED') || message.includes('ERR_CONNECTION_RESET');
-    };
-
-    const isNetworkOrTimeout = (message) => {
-        if (!message) return false;
-        return (
-            isNetworkReset(message) ||
-            message.includes('Failed to fetch') ||
-            message.includes('NetworkError') ||
-            message.includes('AbortError') ||
-            message.includes('timeout') ||
-            message.includes('All promises were rejected')
-        );
-    };
-
-    const extractErrorMessages = (reason) => {
-        if (!reason) return [];
-        if (reason.errors && Array.isArray(reason.errors)) {
-            return reason.errors.map(e => e?.message).filter(Boolean);
-        }
-        if (reason.message) return [reason.message];
-        return [];
-    };
-
     try {
-        if (CONFIG?.IS_DEBUG) console.log('[Validator] Start checks', domain);
-        const [dnsRes, iosRes, androidRes] = await Promise.allSettled([
+        const [dnsRes, iosRes, androidRes] = await Promise.all([
             checkDNS(domain),
             tryFetchWithProxies(aasaUrl),
             tryFetchWithProxies(assetLinksUrl)
         ]);
 
-        validationResults.dns = dnsRes.status === 'fulfilled' ? dnsRes.value : { success: false, error: 'DNS lookup failed', code: 'PROMISE_REJECTED' };
-        validationResults.ios = iosRes.status === 'fulfilled' ? { ...iosRes.value, url: aasaUrl } : { error: iosRes.reason.message, url: aasaUrl };
-        validationResults.android = androidRes.status === 'fulfilled'
-            ? { ...androidRes.value, url: assetLinksUrl }
-            : { error: androidRes.reason.message, url: assetLinksUrl };
+        state.results.dns = dnsRes;
+        state.results.ios = iosRes;
+        state.results.android = androidRes;
 
-        const anyRejected = [iosRes, androidRes, dnsRes].some(r => r.status === 'rejected');
-        const anyNetworkReset = [iosRes, androidRes, dnsRes].some(r => r.status === 'rejected' && isNetworkReset(r.reason?.message));
-        const dnsFailed = !!validationResults.dns?.error;
-        const iosFailed = !!validationResults.ios?.error;
-        const androidFailed = !!validationResults.android?.error;
-        const anyNetworkOrTimeout = [iosRes, androidRes, dnsRes].some(r => {
-            if (r.status !== 'rejected') return false;
-            const messages = extractErrorMessages(r.reason);
-            return messages.some(isNetworkOrTimeout);
-        });
-        const shouldFallback = anyRejected || anyNetworkOrTimeout || anyNetworkReset || dnsFailed || iosFailed || androidFailed;
+        // Quota Optimization: Only fallback if DNS failed or if proxies failed to get a definitive 200/404
+        // If a proxy returns 404, we trust it and don't waste worker quota.
+        const needsFallback =
+            !dnsRes.success ||
+            (iosRes.error && iosRes.status !== 404) ||
+            (androidRes.error && androidRes.status !== 404);
 
-        if (shouldFallback) {
-            if (CONFIG?.IS_DEBUG) {
-                console.log('[Validator] Fallback to worker bundle', {
-                    domain,
-                    anyRejected,
-                    anyNetworkReset,
-                    anyNetworkOrTimeout,
-                    dnsFailed,
-                    iosFailed,
-                    androidFailed,
-                    dnsStatus: validationResults.dns?.success,
-                    iosError: validationResults.ios?.error || null,
-                    androidError: validationResults.android?.error || null
-                });
-            }
-            const bundle = await fetchBundleFromWorker(domain);
-            const dns = bundle?.dns || { success: false, error: 'DNS lookup failed', code: 'BUNDLE_MISSING' };
-            const iosBundle = bundle?.ios || { success: false, error: 'AASA fetch failed' };
-            const androidBundle = bundle?.android || { success: false, error: 'Assetlinks fetch failed' };
-
-            validationResults.dns = dns;
-            validationResults.ios = iosBundle.success
-                ? { ...iosBundle, url: aasaUrl, proxyName: 'My Worker' }
-                : { error: iosBundle.error || 'AASA fetch failed', url: aasaUrl };
-            validationResults.android = androidBundle.success
-                ? { ...androidBundle, url: assetLinksUrl, proxyName: 'My Worker' }
-                : { error: androidBundle.error || 'Assetlinks fetch failed', url: assetLinksUrl };
+        if (needsFallback) {
+            if (CONFIG.IS_DEBUG) console.log('[Orchestrator] Partial proxy failure, falling back to worker');
+            await performFallback(domain);
+        } else {
+            renderResults();
         }
-
-        if (CONFIG?.IS_DEBUG) {
-            console.log('[Validator] Checks success', {
-                domain,
-                dns: validationResults.dns?.success,
-                ios: !validationResults.ios.error,
-                android: !validationResults.android.error,
-                dnsProvider: validationResults.dns?.provider || 'unknown',
-                iosProxy: validationResults.ios?.proxyName || 'unknown',
-                androidProxy: validationResults.android?.proxyName || 'unknown'
-            });
-        }
-
-        renderResults();
     } catch (e) {
-        validationResults.dns = { success: false, error: e.message || 'Worker bundle failed', code: 'BUNDLE_FAILED' };
-        validationResults.ios = { error: 'Worker bundle failed', url: aasaUrl };
-        validationResults.android = { error: 'Worker bundle failed', url: assetLinksUrl };
-        renderResults();
+        if (CONFIG.IS_DEBUG) console.log('[Orchestrator] Fatal error, attempting worker fallback', e.message);
+        await performFallback(domain);
     }
 };
 
-const renderResults = () => {
-    const commonChecks = analyzeCommon(validationResults.dns, validationResults.domain, validationResults.ios, validationResults.android);
-
-    let html = `
-        <div class="result-summary" style="margin-bottom: 32px; text-align: center;">
-            <h2 style="margin: 0; font-size: 1.5rem; color: var(--ink);">Results for ${validationResults.domain}</h2>
-        </div>
-        
-        <div class="common-section" style="margin-bottom: 48px;">
-            ${buildCommonHTML(commonChecks)}
-        </div>
-    `;
-
-    html += `<div class="results-grid">
-            <div class="platform-column">
-    `;
-
-    // iOS Column
-    const ios = validationResults.ios;
-    if (ios.error) {
-        html += `<div class="platform-header"><span class="platform-icon">🍎</span><span>iOS Validation</span></div>`;
-        html += renderError(ios.error, ios.url);
-    } else {
-        const checks = analyzeIOS(ios.json, DOM.prefixInput.value.trim(), DOM.bundleInput.value.trim(), ios.responseMeta, ios.url);
-        html += buildResultHTML(ios.url, checks, extractIOSApps(ios.json), 'iOS', DOM.bundleInput.value.trim());
-    }
-
-    html += `</div><div class="platform-column">`;
-
-    // Android Column
-    const android = validationResults.android;
-    if (android.error) {
-        html += `<div class="platform-header"><span class="platform-icon">🤖</span><span>Android Validation</span></div>`;
-        html += renderError(android.error, android.url);
-    } else {
-        const checks = analyzeAndroid(android.json, DOM.packageInput.value.trim(), android.responseMeta, android.url);
-        html += buildResultHTML(android.url, checks, extractAndroidApps(android.json), 'Android', DOM.packageInput.value.trim());
-    }
-
-    html += `</div></div>`;
-
-    // Add Raw Source Section at the bottom if any files were fetched
-    if (!ios.error || !android.error) {
-        html += buildRawJSONSection(ios.error ? null : ios, android.error ? null : android);
-    }
-
-    DOM.resultArea.innerHTML = html;
-};
-
-// Listeners
+// Event Listeners
 DOM.validateBtn.onclick = handleValidate;
 [DOM.domainInput, DOM.prefixInput, DOM.bundleInput, DOM.packageInput].forEach(el => {
     el.onkeypress = (e) => { if (e.key === 'Enter') handleValidate(); };
 });
-DOM.domainInput.focus();
 
-// Event Delegation for Copy Buttons
-DOM.resultArea.addEventListener('click', (e) => {
+DOM.resultArea.addEventListener('click', async (e) => {
     const btn = e.target.closest('.copy-btn');
     if (!btn) return;
 
-    const targetId = btn.getAttribute('data-target');
-    const textarea = document.getElementById(targetId);
+    const textarea = document.getElementById(btn.dataset.target);
     if (!textarea) return;
 
-    const originalContent = btn.innerHTML;
-
-    // Copy to clipboard
-    navigator.clipboard.writeText(textarea.value).then(() => {
-        // Feedback State
-        btn.innerHTML = `
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-            Copied!
-        `;
+    try {
+        await navigator.clipboard.writeText(textarea.value);
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '✅ Copied!';
         btn.classList.add('copied');
-
-        // Reset after 2s
         setTimeout(() => {
-            btn.innerHTML = originalContent;
+            btn.innerHTML = originalText;
             btn.classList.remove('copied');
         }, 2000);
-    }).catch(err => {
-        console.error('Failed to copy:', err);
-        // Fallback or error indication
-        btn.innerText = 'Error';
-        setTimeout(() => {
-            btn.innerHTML = originalContent;
-        }, 2000);
-    });
+    } catch (err) {
+        console.error('Copy failed', err);
+    }
 });
+
+DOM.domainInput.focus();

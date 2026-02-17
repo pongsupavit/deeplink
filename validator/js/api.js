@@ -31,10 +31,22 @@ export const fetchFromProxy = async (proxy, targetUrl, timeout) => {
         const url = proxy.type === 'direct' ? targetUrl : proxy.url(targetUrl);
         const resp = await fetch(url, { signal: controller.signal });
 
-        if (!resp.ok) throw new Error(`${proxy.name} fetch failed`);
+        if (resp.status === 404) {
+            return { error: 'Not Found', status: 404, proxyName: proxy.name };
+        }
+        if (!resp.ok) throw new Error(`${proxy.name} fetch failed (${resp.status})`);
 
-        if (proxy.type === 'json') {
+        if (proxy.type === 'json' || (proxy.type === 'simple' && proxy.name === 'AllOrigins')) {
             const data = await resp.json();
+
+            // AllOrigins specific 404 handling inside JSON
+            if (proxy.name === 'AllOrigins' && data.status?.http_code === 404) {
+                return { error: 'Not Found', status: 404, proxyName: proxy.name };
+            }
+            if (proxy.name === 'AllOrigins' && data.status?.http_code !== 200) {
+                throw new Error(`AllOrigins error (${data.status?.http_code})`);
+            }
+
             rawContent = data.contents;
             if (data.status && rawContent?.startsWith('data:')) {
                 responseMeta.contentType = rawContent.split(';')[0].split(':')[1];
