@@ -1,4 +1,12 @@
 /* Theme variables are now imported from ../theme.css */
+:root {
+  --index-width: 32px;
+  --drag-width: 16px;
+  --action-width: 40px;
+  --row-height: 44px;
+  --input-pad-y: 12px;
+  --input-line: 20px;
+}
 
 
 * {
@@ -7,9 +15,6 @@
 
 
 
-.logo-emoji {
-  font-size: 1.5rem;
-}
 
 
 
@@ -102,16 +107,7 @@
 }
 
 /* Tablet / Desktop Styles */
-@media (min-width: 481px) {
-  h1 {
-    font-size: var(--font-h1-desktop);
-  }
-
-  .logo-emoji {
-    font-size: inherit;
-    /* Reset or set to larger if needed */
-  }
-
+@media (min-width: 600px) {
   .tool-card {
     padding: 32px;
   }
@@ -122,24 +118,6 @@
 
 
 
-h1 {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 600;
-  /* Keeping local override 600 */
-  line-height: 1.2;
-}
-
-.header-text {
-  display: grid;
-  gap: 4px;
-}
-
-.subtle {
-  margin: 0;
-  color: var(--muted);
-  font-size: var(--text-sm);
-}
 
 .field {
   display: flex;
@@ -194,6 +172,7 @@ body.is-reordering .input-wrap {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  gap: 4px;
   width: var(--index-width);
   min-height: var(--row-height);
   box-sizing: border-box;
@@ -201,8 +180,19 @@ body.is-reordering .input-wrap {
   user-select: none;
   font-weight: var(--weight-medium);
   opacity: 0.8;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   /* Keeping specific size for index */
+}
+
+.link-index__icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.link-index__icon svg {
+  display: block;
+  width: 14px;
+  height: 14px;
 }
 
 .link-row.is-dragging .link-index {
@@ -216,7 +206,7 @@ body.is-reordering .input-wrap {
   position: relative;
   cursor: grab;
   min-width: 0;
-  touch-action: none;
+  touch-action: pan-y;
 }
 
 .drag-hint {
@@ -384,30 +374,7 @@ body.is-reordering .input-wrap {
 .add-row {
   margin-top: 6px;
   width: 100%;
-  display: grid;
-  grid-template-columns: var(--index-width) minmax(0, 1fr) var(--drag-width) var(--action-width);
-  column-gap: 10px;
-  align-items: flex-start;
-}
-
-.links-list.is-multi+.add-row {
-  grid-template-columns: var(--index-width) minmax(0, 1fr) var(--drag-width) var(--action-width);
-}
-
-.add-row .add-link-btn {
-  grid-column: 2;
-}
-
-.links-list.is-multi+.add-row .add-link-btn {
-  grid-column: 2;
-}
-
-.links-list:not(.is-multi)+.add-row {
-  grid-template-columns: minmax(0, 1fr) var(--action-width);
-}
-
-.links-list:not(.is-multi)+.add-row .add-link-btn {
-  grid-column: 1;
+  display: block;
 }
 
 .add-link-btn {
@@ -421,6 +388,35 @@ body.is-reordering .input-wrap {
   /* Specific size */
   width: 100%;
   justify-content: center;
+}
+
+.add-row .secondary-btn {
+  width: 100%;
+  justify-content: center;
+  display: flex;
+}
+
+.save-row {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.save-row .primary-btn {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.save-row .btn-icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.save-row .btn-icon svg {
+  width: 18px;
+  height: 18px;
 }
 
 .add-link-btn svg {
@@ -482,9 +478,11 @@ textarea {
   min-width: 0;
   display: block;
   padding: var(--input-pad-y) 12px;
-  height: var(--row-height);
+  height: auto;
+  min-height: var(--row-height);
   line-height: var(--input-line);
   resize: none;
+  overflow: hidden;
   white-space: pre-wrap;
   word-break: break-word;
   padding-left: 12px;
@@ -513,9 +511,9 @@ textarea {
   background: var(--error);
 }
 
-.links-list.is-multi .link-url {
-  height: auto;
-  min-height: var(--row-height);
+/* Edit mode: keep space for inline indicator */
+.field:not(.is-view) .link-url {
+  padding-right: 12px;
 }
 
 input[type="text"]:focus,
@@ -617,8 +615,20 @@ button.secondary:active {
   margin: 0;
 }
 
-.status-row .page-edit-btn {
+.status-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   flex: 0 0 auto;
+}
+
+.share-btn {
+  background: #ffffff;
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .share-btn {
+  background: var(--card);
 }
 
 .status strong {
@@ -797,4 +807,31 @@ button.secondary:active {
 
 .links-list:not(.is-multi) .link-error {
   grid-column: 1;
+}
+
+@media (max-width: 600px) {
+  .link-index,
+  .drag-hint {
+    display: none !important;
+  }
+
+  .link-row,
+  .links-list.is-multi .link-row,
+  .links-list:not(.is-multi) .link-row,
+  .field.is-view .links-list.is-multi .link-row,
+  .field.is-view .links-list:not(.is-multi) .link-row {
+    grid-template-columns: minmax(0, 1fr) var(--action-width);
+  }
+
+  .link-row .input-wrap,
+  .links-list.is-multi .link-error,
+  .field.is-view .links-list.is-multi .input-wrap,
+  .field.is-view .links-list.is-multi .link-error,
+  .links-list:not(.is-multi) .input-wrap {
+    grid-column: 1;
+  }
+
+  .link-remove {
+    grid-column: 2;
+  }
 }

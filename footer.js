@@ -3,10 +3,11 @@
         // Don't inject if already exists
         if (document.querySelector('.global-footer')) return;
 
+        const year = new Date().getFullYear();
         const footerHTML = `
             <footer class="global-footer">
                 <div class="global-footer__content">
-                    <p>Developed by <a href="https://github.com/pongsupavit" target="_blank" rel="noopener noreferrer">Pongsupavit</a></p>
+                    <p>© ${year} | Developed by <a href="https://github.com/pongsupavit" target="_blank" rel="noopener noreferrer">Pongsupavit</a></p>
                 </div>
             </footer>
         `;

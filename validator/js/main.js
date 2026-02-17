@@ -190,11 +190,13 @@ DOM.resultArea.addEventListener('click', async (e) => {
 
     try {
         await navigator.clipboard.writeText(textarea.value);
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '✅ Copied!';
+        const textSpan = btn.querySelector('.copy-btn__text');
+        if (!textSpan) return;
+        const originalText = textSpan.textContent;
+        textSpan.textContent = 'Copied';
         btn.classList.add('copied');
         setTimeout(() => {
-            btn.innerHTML = originalText;
+            textSpan.textContent = originalText;
             btn.classList.remove('copied');
         }, 2000);
     } catch (err) {

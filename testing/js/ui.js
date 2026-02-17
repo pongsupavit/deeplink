@@ -131,7 +131,13 @@ export const refreshUI = () => {
     rows.forEach((row, index) => {
         row.dataset.index = String(index);
         const indexEl = row.querySelector(".link-index");
-        if (indexEl) indexEl.textContent = `Link ${index + 1}`;
+        if (indexEl) {
+            indexEl.innerHTML = `
+                <span class="link-index__icon" aria-hidden="true" data-icon="LINK"></span>
+                <span class="link-index__text">${index + 1}</span>
+            `;
+            renderIcons(indexEl);
+        }
         const inputEl = row.querySelector(".link-url");
         if (inputEl) {
             inputEl.id = `deeplink-${index}`;
@@ -151,9 +157,9 @@ export const refreshUI = () => {
     // Page Edit Button
     const editBtn = DOM.pageEditBtn();
     if (editBtn) {
-        editBtn.style.display = (editMode || hasAnyValue) ? "inline-flex" : "none";
-        editBtn.dataset.icon = editMode ? "UPDATE" : "EDIT";
-        editBtn.setAttribute("aria-label", editMode ? "Update" : "Edit");
+        editBtn.style.display = (!editMode && hasAnyValue) ? "inline-flex" : "none";
+        editBtn.dataset.icon = "EDIT";
+        editBtn.setAttribute("aria-label", "Edit");
         renderIcons(editBtn.parentElement);
     }
 
@@ -161,12 +167,21 @@ export const refreshUI = () => {
     const forwardBtn = DOM.forwardShareBtn();
     if (forwardBtn) forwardBtn.style.display = hasAnyValue ? "inline-flex" : "none";
 
+    const shareBtn = DOM.shareBtn();
+    if (shareBtn) shareBtn.style.display = (hasAnyValue && !editMode) ? "inline-flex" : "none";
+
     // General Field state
     const field = DOM.field();
     if (field) field.classList.toggle("is-view", !editMode);
 
     const addRowBtn = DOM.addRow();
     if (addRowBtn) addRowBtn.style.display = editMode ? "" : "none";
+
+    const saveBtn = DOM.saveBtn ? DOM.saveBtn() : null;
+    if (saveBtn) {
+        saveBtn.style.display = editMode ? "" : "none";
+        renderIcons(saveBtn);
+    }
 
     if (!editMode) {
         inputs.forEach(inputEl => lockIfValid(inputEl));
@@ -262,4 +277,3 @@ export const lockIfValid = (inputEl) => {
         autosizeTextarea(inputEl);
     }
 };
-

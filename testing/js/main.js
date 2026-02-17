@@ -28,58 +28,62 @@ const handleShare = async () => {
     }
 };
 
-const toggleEditMode = () => {
-    if (state.editMode) {
-        const inputs = getLinkInputs();
-        if (inputs.some(i => i.value.trim().length > 0 && !validateLink(i.value.trim()).ok)) return;
+const enterEditMode = () => {
+    if (state.editMode) return;
+    updateState('editMode', true);
+    refreshUI();
+};
 
-        const rows = getRows();
-
-        // Find the index of the last row that has content
-        let lastNonEmptyIndex = -1;
-        rows.forEach((row, i) => {
-            if (row.querySelector(".link-url")?.value.trim()) {
-                lastNonEmptyIndex = i;
-            }
-        });
-
-        // Identify blocking empty rows (those before the last contentful row)
-        const blockingEmptyIndices = [];
-        rows.forEach((row, i) => {
-            if (i < lastNonEmptyIndex && !row.querySelector(".link-url")?.value.trim()) {
-                blockingEmptyIndices.push(i + 1);
-            }
-        });
-
-        if (blockingEmptyIndices.length > 0) {
-            return setStatus(`Please fill or remove empty rows in the middle: Link ${blockingEmptyIndices.join(", ")}`, "Notice", "error");
-        }
-
-        // Clean up trailing empty rows
-        rows.forEach((row, i) => {
-            if (i > lastNonEmptyIndex) row.remove();
-        });
-
-        const finalInputs = getLinkInputs();
-        const values = finalInputs.map(i => i.value.trim());
-
-        if (values.length === 0) {
-            updateState('editMode', true);
-            if (getRows().length === 0) addLinkRow();
-            return setStatus("Enter a link to test.", "", "idle");
-        }
-
-        const url = new URL(window.location.href);
-        url.search = "";
-        values.forEach((v, i) => url.searchParams.set(`link${i + 1}`, v));
-        window.history.replaceState({}, "", url.toString());
-
-        setStatus("Updated.", "Ready", "ready");
-        trackEvent("testing_link_save", { count: values.length });
-        updateState('editMode', false);
-    } else {
-        updateState('editMode', true);
+const saveEditMode = () => {
+    const inputs = getLinkInputs();
+    if (inputs.some(i => i.value.trim().length > 0 && !validateLink(i.value.trim()).ok)) {
+        return setStatus("Invalid link format.", "Error", "error");
     }
+
+    const rows = getRows();
+
+    // Find the index of the last row that has content
+    let lastNonEmptyIndex = -1;
+    rows.forEach((row, i) => {
+        if (row.querySelector(".link-url")?.value.trim()) {
+            lastNonEmptyIndex = i;
+        }
+    });
+
+    // Identify blocking empty rows (those before the last contentful row)
+    const blockingEmptyIndices = [];
+    rows.forEach((row, i) => {
+        if (i < lastNonEmptyIndex && !row.querySelector(".link-url")?.value.trim()) {
+            blockingEmptyIndices.push(i + 1);
+        }
+    });
+
+    if (blockingEmptyIndices.length > 0) {
+        return setStatus(`Please fill or remove empty rows in the middle: Link ${blockingEmptyIndices.join(", ")}`, "Notice", "error");
+    }
+
+    // Clean up trailing empty rows
+    rows.forEach((row, i) => {
+        if (i > lastNonEmptyIndex) row.remove();
+    });
+
+    const finalInputs = getLinkInputs();
+    const values = finalInputs.map(i => i.value.trim());
+
+    if (values.length === 0) {
+        updateState('editMode', true);
+        if (getRows().length === 0) addLinkRow();
+        return setStatus("Enter a link to test.", "", "idle");
+    }
+
+    const url = new URL(window.location.href);
+    url.search = "";
+    values.forEach((v, i) => url.searchParams.set(`link${i + 1}`, v));
+    window.history.replaceState({}, "", url.toString());
+
+    setStatus("Updated.", "Ready", "ready");
+    trackEvent("testing_link_save", { count: values.length });
+    updateState('editMode', false);
     refreshUI();
 };
 
@@ -135,7 +139,7 @@ DOM.linksList().addEventListener("click", e => {
 DOM.linksList().addEventListener("keydown", e => {
     if (e.target.classList.contains("link-url") && e.key === "Enter") {
         e.preventDefault();
-        if (state.editMode) toggleEditMode();
+        if (state.editMode) saveEditMode();
         else openLink(e.target);
     }
 });
@@ -143,7 +147,8 @@ DOM.linksList().addEventListener("keydown", e => {
 DOM.addLinkBtn().addEventListener("click", () => addLinkRow());
 DOM.shareBtn()?.addEventListener("click", handleShare);
 DOM.forwardShareBtn()?.addEventListener("click", handleShare);
-DOM.pageEditBtn()?.addEventListener("click", toggleEditMode);
+DOM.pageEditBtn()?.addEventListener("click", enterEditMode);
+DOM.saveBtn()?.addEventListener("click", saveEditMode);
 DOM.qrClose().addEventListener("click", closeQrModal);
 DOM.qrBackdrop().addEventListener("click", closeQrModal);
 DOM.themeOptions().forEach(btn => btn.addEventListener("click", () => {

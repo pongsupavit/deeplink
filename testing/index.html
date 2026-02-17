@@ -9,7 +9,7 @@
     content="Deeplink Testing Tool for URI Schemes, App Links, and Universal Links. Test and validate deeplinks across platforms." />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://pongsupavit.github.io/deeplink" />
-  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Deeplink Testing Tool" />
   <meta property="og:description"
@@ -39,11 +39,6 @@
       "url": "https://pongsupavit.github.io/deeplink"
     }
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap"
-    rel="stylesheet">
 </head>
 
 <body>
@@ -59,23 +54,22 @@
         </div>
         <p class="subtle">Supports URI Scheme, App Link, and Universal Link.</p>
       </div>
-      <div class="header-actions">
-        <button id="shareBtn" class="forward-callout" aria-label="Share">
-          <span class="forward-text">Share</span>
-          <svg xmlns="http://www.w3.org/2000/svg" height="22px" viewBox="0 -960 960 960" width="22px"
-            fill="currentColor">
-            <path
-              d="m640-280-57-56 184-184-184-184 57-56 240 240-240 240ZM80-200v-160q0-83 58.5-141.5T280-560h247L383-704l57-56 240 240-240 240-57-56 144-144H280q-50 0-85 35t-35 85v160H80Z" />
-          </svg>
-        </button>
-      </div>
     </header>
 
     <div class="card">
       <div class="field">
         <div class="status-row">
           <div class="status" id="status">Please input testing link</div>
-          <button id="pageEditBtn" class="page-edit-btn" type="button" aria-label="Edit" data-icon="EDIT"></button>
+          <div class="status-actions">
+            <button id="pageEditBtn" class="page-edit-btn" type="button" aria-label="Edit" data-icon="EDIT"></button>
+            <button id="shareBtn" class="page-edit-btn share-btn" type="button" aria-label="Share">
+              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"
+                fill="currentColor">
+                <path
+                  d="m640-280-57-56 184-184-184-184 57-56 240 240-240 240ZM80-200v-160q0-83 58.5-141.5T280-560h247L383-704l57-56 240 240-240 240-57-56 144-144H280q-50 0-85 35t-35 85v160H80Z" />
+              </svg>
+            </button>
+          </div>
         </div>
         <div id="linksList" class="links-list">
           <!-- Rows are dynamically generated -->
@@ -86,6 +80,12 @@
             aria-label="Add another link">
             <span class="add-link-icon" aria-hidden="true" data-icon="ADD"></span>
             Add another link
+          </button>
+        </div>
+        <div class="save-row">
+          <button id="saveBtn" class="primary-btn" type="button">
+            <span class="btn-icon" aria-hidden="true" data-icon="UPDATE"></span>
+            Save
           </button>
         </div>
       </div>
