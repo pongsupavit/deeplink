@@ -1,4 +1,5 @@
 import { fetchBundleFromWorker, checkDNS, tryFetchWithProxies } from './api.js';
+import { trackEvent } from './analytics.js';
 import { CONFIG } from './config.js';
 import {
     analyzeCommon, analyzeIOS, analyzeAndroid,
@@ -140,6 +141,13 @@ const handleValidate = async () => {
         DOM.packageInput.value.trim()
     );
 
+    trackEvent('validator_scan', {
+        domain,
+        has_prefix: !!state.iosPrefix,
+        has_bundle: !!state.iosBundle,
+        has_package: !!state.androidPackage
+    });
+
     renderLoading(domain);
 
     const aasaUrl = `https://${domain}/.well-known/apple-app-site-association`;
@@ -201,6 +209,24 @@ DOM.resultArea.addEventListener('click', async (e) => {
         }, 2000);
     } catch (err) {
         console.error('Copy failed', err);
+    }
+
+    trackEvent('validator_copy_raw', { target_platform: btn.dataset.target.includes('ios') ? 'iOS' : 'Android' });
+});
+
+// Outbound Link Tracking
+DOM.resultArea.addEventListener('click', (e) => {
+    const link = e.target.closest('a');
+    if (!link) return;
+
+    const isAasa = link.href.includes('apple-app-site-association');
+    const isAssetLinks = link.href.includes('assetlinks.json');
+
+    if (isAasa || isAssetLinks) {
+        trackEvent('validator_link_click', {
+            link_url: link.href,
+            platform: isAasa ? 'iOS' : 'Android'
+        });
     }
 });
 

@@ -158,9 +158,7 @@ export const refreshUI = () => {
     const editBtn = DOM.pageEditBtn();
     if (editBtn) {
         editBtn.style.display = (!editMode && hasAnyValue) ? "inline-flex" : "none";
-        editBtn.dataset.icon = "EDIT";
-        editBtn.setAttribute("aria-label", "Edit");
-        renderIcons(editBtn.parentElement);
+        renderIcons(editBtn);
     }
 
     // Forward Share Button
@@ -168,7 +166,10 @@ export const refreshUI = () => {
     if (forwardBtn) forwardBtn.style.display = hasAnyValue ? "inline-flex" : "none";
 
     const shareBtn = DOM.shareBtn();
-    if (shareBtn) shareBtn.style.display = (hasAnyValue && !editMode) ? "inline-flex" : "none";
+    if (shareBtn) {
+        shareBtn.style.display = (hasAnyValue && !editMode) ? "inline-flex" : "none";
+        renderIcons(shareBtn);
+    }
 
     // General Field state
     const field = DOM.field();
@@ -249,7 +250,7 @@ export const openLink = (inputEl) => {
         return;
     }
 
-    trackEvent("testing_link_click", { type: validation.type });
+    trackEvent("testing_link_click", { type: validation.type, value: value });
     const row = inputEl.closest(".link-row");
     const index = row ? Number(row.dataset.index || "0") : 0;
     const label = `Link ${index + 1}`;
@@ -257,7 +258,8 @@ export const openLink = (inputEl) => {
     setStatus(`Attempting to open (${validation.type}): <span>${value}</span>`, "Working", "working");
 
     if (isDesktop("(min-width: 700px)")) {
-        openQrModal(value, `Scan ${label}`, `${label}: ${value}`, setStatus);
+        const htmlLabel = `<span data-icon="LINK" class="qr-text-icon"></span> ${index + 1}: ${value}`;
+        openQrModal(value, `Scan ${label}`, htmlLabel, setStatus);
         return;
     }
 

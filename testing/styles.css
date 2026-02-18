@@ -66,10 +66,19 @@
 }
 
 .status {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  color: var(--muted);
+  margin-top: 16px;
+  margin-bottom: 12px;
+  padding: 12px 14px;
   border-radius: 10px;
+  background: transparent;
+  border: 1px dashed var(--border);
+  color: var(--muted);
+  font-size: var(--text-sm);
+  min-height: 48px;
+  display: block;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .header-actions {
@@ -371,8 +380,9 @@ body.is-reordering .input-wrap {
   display: none;
 }
 
-.add-row {
-  margin-top: 6px;
+.add-row,
+.save-row {
+  margin-top: 16px;
   width: 100%;
   display: block;
 }
@@ -396,9 +406,35 @@ body.is-reordering .input-wrap {
   display: flex;
 }
 
-.save-row {
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.page-header>.secondary-btn {
+  flex-shrink: 0;
   margin-top: 8px;
-  width: 100%;
+}
+
+.actions-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.actions-container .primary-btn,
+.actions-container .secondary-btn {
+  min-width: 120px;
+  justify-content: center;
+}
+
+.actions-container .btn-icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
 }
 
 .save-row .primary-btn {
@@ -587,31 +623,16 @@ button.secondary:active {
 }
 
 
-.status {
-  margin-top: 16px;
-  margin-bottom: 12px;
-  padding: 12px 14px;
-  border-radius: 10px;
-  background: transparent;
-  border: 1px dashed var(--border);
-  color: var(--muted);
-  font-size: var(--text-sm);
-  min-height: 48px;
-  display: block;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
+/* .status moved to section starting at L606 */
 
 .status-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: block;
   width: 100%;
+  margin-bottom: 24px;
 }
 
 .status-row .status {
-  flex: 1 1 auto;
+  width: 100%;
   margin: 0;
 }
 
@@ -682,7 +703,7 @@ button.secondary:active {
   position: absolute;
   inset: 0;
   background: var(--qr-backdrop);
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
 }
 
 .qr-content {
@@ -714,6 +735,29 @@ button.secondary:active {
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--qr-text);
+}
+
+.qr-text {
+  font-size: 0.9rem;
+  color: var(--muted);
+  word-break: break-all;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  line-height: 1;
+}
+
+.qr-text-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.qr-text-icon svg {
+  width: 16px;
+  height: 16px;
 }
 
 .qr-canvas {
@@ -810,6 +854,7 @@ button.secondary:active {
 }
 
 @media (max-width: 600px) {
+
   .link-index,
   .drag-hint {
     display: none !important;
@@ -818,9 +863,12 @@ button.secondary:active {
   .link-row,
   .links-list.is-multi .link-row,
   .links-list:not(.is-multi) .link-row,
-  .field.is-view .links-list.is-multi .link-row,
-  .field.is-view .links-list:not(.is-multi) .link-row {
+  .field.is-view .links-list.is-multi .link-row {
     grid-template-columns: minmax(0, 1fr) var(--action-width);
+  }
+
+  .field.is-view .links-list:not(.is-multi) .link-row {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .link-row .input-wrap,

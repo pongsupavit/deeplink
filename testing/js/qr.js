@@ -84,8 +84,8 @@ export const openQrModal = async (value, title, displayText, setStatus) => {
         qrCanvas.innerHTML = "";
         renderQR(qrCanvas, value, 220);
         addQrPadding(16);
-        if (qrTitle) qrTitle.textContent = title || "Scan to test";
-        qrText.textContent = displayText || value;
+        if (qrTitle) qrTitle.innerHTML = title || "Scan to test";
+        qrText.innerHTML = displayText || value;
 
         // Store metadata for download filename
         const downloadBtn = DOM.qrDownload();

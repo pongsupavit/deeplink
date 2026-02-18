@@ -46,7 +46,7 @@
   <script src="../nav.js"></script>
   <script src="../footer.js"></script>
   <main class="wrap">
-    <header>
+    <header class="page-header">
       <div class="header-text">
         <div class="logo-row" style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
           <span class="logo-emoji" style="font-size: 2rem;">📱</span>
@@ -54,23 +54,18 @@
         </div>
         <p class="subtle">Supports URI Scheme, App Link, and Universal Link.</p>
       </div>
+      <button id="shareBtn" class="secondary-btn" type="button" style="display: none;" aria-label="Share testing links">
+        <span class="share-icon" aria-hidden="true" data-icon="FORWARD"></span>
+        Share
+      </button>
     </header>
 
     <div class="card">
       <div class="field">
         <div class="status-row">
           <div class="status" id="status">Please input testing link</div>
-          <div class="status-actions">
-            <button id="pageEditBtn" class="page-edit-btn" type="button" aria-label="Edit" data-icon="EDIT"></button>
-            <button id="shareBtn" class="page-edit-btn share-btn" type="button" aria-label="Share">
-              <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px"
-                fill="currentColor">
-                <path
-                  d="m640-280-57-56 184-184-184-184 57-56 240 240-240 240ZM80-200v-160q0-83 58.5-141.5T280-560h247L383-704l57-56 240 240-240 240-57-56 144-144H280q-50 0-85 35t-35 85v160H80Z" />
-              </svg>
-            </button>
-          </div>
         </div>
+
         <div id="linksList" class="links-list">
           <!-- Rows are dynamically generated -->
         </div>
@@ -82,13 +77,20 @@
             Add another link
           </button>
         </div>
-        <div class="save-row">
-          <button id="saveBtn" class="primary-btn" type="button">
-            <span class="btn-icon" aria-hidden="true" data-icon="UPDATE"></span>
-            Save
-          </button>
-        </div>
+
       </div>
+    </div>
+
+    <div class="actions-container">
+      <button id="saveBtn" class="primary-btn" type="submit" aria-label="Save and generate QR">
+        <span class="save-icon" aria-hidden="true" data-icon="UPDATE"></span>
+        Save
+      </button>
+      <button id="pageEditBtn" class="secondary-btn" type="button" style="display: none;" aria-label="Edit links">
+        <span class="edit-icon" aria-hidden="true" data-icon="EDIT"></span>
+        Edit
+      </button>
+
     </div>
   </main>
 
