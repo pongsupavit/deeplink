@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>URL Pretty Print</title>
+  <meta name="description" content="Pretty print URLs by breaking query parameters into readable lines." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://pongsupavit.github.io/deeplink/pretty/" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="URL Pretty Print" />
+  <meta property="og:description"
+    content="Pretty print URLs by breaking query parameters into readable lines." />
+  <meta property="og:image" content="url-pretty-print-cover.png" />
+  <meta property="og:url" content="https://pongsupavit.github.io/deeplink/pretty/" />
+  <meta property="og:site_name" content="URL Pretty Print" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="URL Pretty Print" />
+  <meta name="twitter:description"
+    content="Pretty print URLs by breaking query parameters into readable lines." />
+  <meta name="twitter:image" content="url-pretty-print-cover.png" />
+  <meta name="twitter:image:alt" content="URL Pretty Print cover image." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../theme.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <script src="../constants.js"></script>
+  <script src="../nav.js"></script>
+  <script src="../footer.js"></script>
+
+  <main class="wrap">
+    <header class="page-header">
+      <div class="header-text">
+        <div class="logo-row">
+          <span class="logo-emoji">🧾</span>
+          <h1>URL Pretty Print</h1>
+        </div>
+        <p class="subtle">Break long URLs into readable, line-by-line parameters.</p>
+      </div>
+    </header>
+
+    <div class="card">
+      <label for="urlInput">Paste URL</label>
+      <textarea id="urlInput" rows="4" placeholder="https://example.com/path?foo=1&bar=two"></textarea>
+      <div class="actions">
+        <button id="prettyBtn" class="primary-btn" type="button">Pretty Print URL</button>
+        <button id="clearBtn" class="secondary-btn" type="button">Clear</button>
+        <button id="copyBtn" class="secondary-btn" type="button">Copy</button>
+      </div>
+    </div>
+
+    <div class="card output-card">
+      <div id="status" class="status">Ready</div>
+      <pre id="output" class="output" aria-live="polite"></pre>
+    </div>
+  </main>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+
+</html>

@@ -32,26 +32,6 @@
 }
 
 /* Button & Input Fixes */
-.secondary-btn {
-  background: var(--card);
-  color: var(--ink);
-  border: 1px solid var(--border);
-  padding: 0 20px;
-  height: 44px;
-  border-radius: 10px;
-  font-weight: var(--weight-medium);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.secondary-btn:hover {
-  background: var(--bg);
-  border-color: var(--muted);
-}
-
 .field {
   display: flex;
   flex-direction: column;
@@ -260,7 +240,7 @@ body.is-reordering .input-wrap {
 .link-url.is-locked {
   border-color: transparent;
   background: var(--locked-bg);
-  color: #ffffff;
+  color: var(--text-on-strong);
   box-shadow: none;
   cursor: pointer;
   min-height: 0;
@@ -270,7 +250,7 @@ body.is-reordering .input-wrap {
 }
 
 .link-url.is-locked::placeholder {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-on-strong-muted);
 }
 
 .links-list.is-multi .link-row {
@@ -409,12 +389,47 @@ body.is-reordering .input-wrap {
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
-.page-header>.secondary-btn {
+.header-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.logo-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-row h1 {
+  margin-right: auto;
+}
+
+.header-share {
+  margin-left: auto;
   flex-shrink: 0;
-  margin-top: 8px;
+  height: 36px;
+  padding: 0 10px 0 12px;
+  border-radius: 999px;
+  gap: 8px;
+  font-weight: var(--weight-medium);
+}
+
+.header-share .share-icon {
+  display: inline-flex;
+}
+
+@media (max-width: 600px) {
+  .header-share {
+    height: 32px;
+    padding: 0 8px 0 10px;
+    font-size: 0.8rem;
+  }
 }
 
 .actions-container {
@@ -423,6 +438,7 @@ body.is-reordering .input-wrap {
   align-items: center;
   gap: 12px;
   margin-top: 24px;
+  width: 100%;
 }
 
 .actions-container .primary-btn,
@@ -482,7 +498,7 @@ textarea {
 
 .link-url.is-locked {
   background: var(--accent) !important;
-  color: #ffffff !important;
+  color: var(--text-on-strong) !important;
   border-color: transparent !important;
   cursor: pointer;
   box-shadow: 0 4px 12px var(--ring);
@@ -550,69 +566,6 @@ textarea {
 /* Edit mode: keep space for inline indicator */
 .field:not(.is-view) .link-url {
   padding-right: 12px;
-}
-
-input[type="text"]:focus,
-textarea:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 4px var(--focus-ring);
-}
-
-button {
-  border: none;
-  padding: 12px 14px;
-  border-radius: 10px;
-  font-weight: 600;
-  /* Keeping 600 or change to bold/medium? Let's keep 600 or use bold. */
-  font-size: var(--text-sm);
-  background: var(--accent);
-  color: #ffffff;
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.2s ease;
-  white-space: nowrap;
-}
-
-button:hover {
-  transform: translateY(var(--hover-y));
-  box-shadow: var(--hover-shadow);
-  filter: var(--btn-hover-filter);
-}
-
-button.icon-btn:hover,
-button.icon-btn:hover {
-  box-shadow: none;
-}
-
-button:not(.icon-btn):hover {
-  filter: brightness(0.95);
-}
-
-button.secondary {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--ink);
-}
-
-button.secondary:hover {
-  background: var(--secondary-hover-bg);
-  border-color: var(--secondary-hover-border);
-}
-
-button.secondary:active {
-  background: var(--secondary-active-bg);
-  border-color: var(--secondary-active-border);
-}
-
-.icon-btn {
-  width: 36px;
-  height: 36px;
-  padding: 0;
-  display: grid;
-  place-items: center;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--ink);
-  align-self: start;
 }
 
 .theme-icon {
@@ -797,55 +750,6 @@ button.secondary:active {
   margin-top: 16px;
 }
 
-.qr-download {
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--btn-pri-bg);
-  color: var(--btn-pri-ink);
-  border-radius: 10px;
-  transition: all var(--transition-fast);
-}
-
-.qr-download span {
-  display: flex;
-  align-items: center;
-}
-
-.qr-download span svg {
-  width: 20px;
-  height: 20px;
-}
-
-.qr-download:hover {
-  transform: translateY(var(--hover-y));
-  box-shadow: var(--hover-shadow);
-  filter: var(--btn-hover-filter);
-}
-
-.qr-close {
-  min-width: 100px;
-  background: var(--btn-pri-bg);
-  color: var(--btn-pri-ink);
-  border: none;
-  height: 40px;
-  border-radius: 10px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  transition: all var(--transition-fast);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.qr-close:hover {
-  transform: translateY(var(--hover-y));
-  box-shadow: var(--hover-shadow);
-  filter: var(--btn-hover-filter);
-}
 
 
 
@@ -855,7 +759,6 @@ button.secondary:active {
 
 @media (max-width: 600px) {
 
-  .link-index,
   .drag-hint {
     display: none !important;
   }
@@ -864,11 +767,11 @@ button.secondary:active {
   .links-list.is-multi .link-row,
   .links-list:not(.is-multi) .link-row,
   .field.is-view .links-list.is-multi .link-row {
-    grid-template-columns: minmax(0, 1fr) var(--action-width);
+    grid-template-columns: var(--index-width) minmax(0, 1fr) var(--action-width);
   }
 
   .field.is-view .links-list:not(.is-multi) .link-row {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: var(--index-width) minmax(0, 1fr);
   }
 
   .link-row .input-wrap,
@@ -876,10 +779,10 @@ button.secondary:active {
   .field.is-view .links-list.is-multi .input-wrap,
   .field.is-view .links-list.is-multi .link-error,
   .links-list:not(.is-multi) .input-wrap {
-    grid-column: 1;
+    grid-column: 2;
   }
 
   .link-remove {
-    grid-column: 2;
+    grid-column: 3;
   }
 }

@@ -26,6 +26,11 @@
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-9FPRXDMJJC"></script>
   <script src="../ga.js" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="../theme.css" />
   <link rel="stylesheet" href="styles.css" />
   <script type="application/ld+json">
@@ -54,7 +59,8 @@
         </div>
         <p class="subtle">Supports URI Scheme, App Link, and Universal Link.</p>
       </div>
-      <button id="shareBtn" class="secondary-btn" type="button" style="display: none;" aria-label="Share testing links">
+      <button id="shareBtn" class="secondary-btn header-share" type="button" style="display: none;"
+        aria-label="Share testing links">
         <span class="share-icon" aria-hidden="true" data-icon="FORWARD"></span>
         Share
       </button>
@@ -79,18 +85,16 @@
         </div>
 
       </div>
-    </div>
-
-    <div class="actions-container">
-      <button id="saveBtn" class="primary-btn" type="submit" aria-label="Save and generate QR">
-        <span class="save-icon" aria-hidden="true" data-icon="UPDATE"></span>
-        Save
-      </button>
-      <button id="pageEditBtn" class="secondary-btn" type="button" style="display: none;" aria-label="Edit links">
-        <span class="edit-icon" aria-hidden="true" data-icon="EDIT"></span>
-        Edit
-      </button>
-
+      <div class="actions-container">
+        <button id="saveBtn" class="primary-btn" type="submit" aria-label="Save and generate QR">
+          <span class="save-icon" aria-hidden="true" data-icon="UPDATE"></span>
+          Save
+        </button>
+        <button id="pageEditBtn" class="secondary-btn" type="button" style="display: none;" aria-label="Edit links">
+          <span class="edit-icon" aria-hidden="true" data-icon="EDIT"></span>
+          Edit
+        </button>
+      </div>
     </div>
   </main>
 
@@ -103,10 +107,12 @@
       <div id="qrCanvas" class="qr-canvas"></div>
       <p id="qrText" class="qr-text"></p>
       <div class="qr-actions">
-        <button id="qrDownload" class="qr-download icon-btn" aria-label="Download QR Code">
+        <button id="qrDownload" class="icon-btn primary-btn" aria-label="Download QR Code">
           <span data-icon="DOWNLOAD"></span>
         </button>
-        <button id="qrClose" class="qr-close" aria-label="Close modal">Close</button>
+        <button id="qrClose" class="qr-close icon-btn secondary-btn" aria-label="Close modal">
+          <span data-icon="REMOVE" aria-hidden="true"></span>
+        </button>
       </div>
     </div>
   </div>

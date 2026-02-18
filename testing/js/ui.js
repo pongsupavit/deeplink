@@ -40,6 +40,10 @@ export const addLinkRow = (prefill = "", index = -1) => {
 };
 
 export const renderIcons = (container = document) => {
+    if (window.renderIcons) {
+        window.renderIcons(container);
+        return;
+    }
     container.querySelectorAll("[data-icon]").forEach(el => {
         const iconName = el.dataset.icon;
         if (SVGS[iconName]) {

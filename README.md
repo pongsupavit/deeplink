@@ -16,6 +16,11 @@ A validator for `apple-app-site-association` (AASA) and `assetlinks.json` files.
 - **Features**: Checks HTTPS, redirects, MIME types, and JSON syntax. Simulates Apple/Google bot scraping behavior.
 - **Try it**: [Launch Validator](./validator/)
 
+### 3. [URL Pretty Print](./pretty/) 🧾
+Pretty print long URLs into readable, line-by-line parameters.
+- **Features**: Breaks query strings into readable lines. Supports custom schemes and optional hash fragments.
+- **Try it**: [Launch URL Pretty Print](./pretty/)
+
 ## 🚀 Getting Started
 
 These tools are static web applications and can be hosted on GitHub Pages or any static hosting service.
