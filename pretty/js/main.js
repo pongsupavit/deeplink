@@ -41,19 +41,19 @@ const prettyPrint = (value) => {
 
   const lines = [];
   lines.push(buildBase(parsed));
+  if (parsed.searchParams.toString()) lines.push('');
 
   const params = Array.from(parsed.searchParams.entries());
-  params.forEach(([key, value], index) => {
-    const prefix = index === 0 ? '?' : '&';
+  params.forEach(([key, value]) => {
     const pair = value.length > 0 ? `${key}=${value}` : key;
-    lines.push(`${prefix}${pair}`);
+    lines.push(pair);
   });
 
   if (parsed.hash) {
     lines.push(parsed.hash);
   }
 
-  const statusNote = assumedScheme ? 'Assumed https:// because no scheme was provided.' : 'Ready';
+  const statusNote = assumedScheme ? 'Assumed https:// because no scheme was provided.' : 'Done';
   return { text: lines.join('\n'), note: statusNote };
 };
 

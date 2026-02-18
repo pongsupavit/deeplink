@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>URL Encode / Decode</title>
+  <meta name="description" content="Encode or decode URLs and query strings instantly." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://pongsupavit.github.io/deeplink/codec/" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="URL Encode / Decode" />
+  <meta property="og:description" content="Encode or decode URLs and query strings instantly." />
+  <meta property="og:image" content="url-encode-decode-cover.png" />
+  <meta property="og:url" content="https://pongsupavit.github.io/deeplink/codec/" />
+  <meta property="og:site_name" content="URL Encode / Decode" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="URL Encode / Decode" />
+  <meta name="twitter:description" content="Encode or decode URLs and query strings instantly." />
+  <meta name="twitter:image" content="url-encode-decode-cover.png" />
+  <meta name="twitter:image:alt" content="URL Encode / Decode cover image." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../theme.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <script src="../constants.js"></script>
+  <script src="../nav.js"></script>
+  <script src="../footer.js"></script>
+
+  <main class="wrap">
+    <header class="page-header">
+      <div class="header-text">
+        <div class="logo-row">
+          <span class="logo-emoji">🔤</span>
+          <h1>URL Encode / Decode</h1>
+        </div>
+        <p class="subtle">Encode or decode URLs, query strings, and text instantly.</p>
+      </div>
+    </header>
+
+    <div class="card">
+      <label for="inputText">Input</label>
+      <textarea id="inputText" rows="5" placeholder="https://example.com/?q=hello world"></textarea>
+      <div class="actions">
+        <button id="encodeBtn" class="primary-btn" type="button">Encode</button>
+        <button id="decodeBtn" class="secondary-btn" type="button">Decode</button>
+        <button id="clearBtn" class="secondary-btn" type="button">Clear</button>
+      </div>
+    </div>
+
+    <div class="card output-card">
+      <div id="status" class="status">Ready</div>
+      <div class="output-actions">
+        <button id="copyBtn" class="secondary-btn" type="button">Copy Output</button>
+      </div>
+      <textarea id="outputText" rows="5" class="output" readonly></textarea>
+    </div>
+  </main>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+
+</html>

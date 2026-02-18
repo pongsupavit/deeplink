@@ -21,6 +21,11 @@ Pretty print long URLs into readable, line-by-line parameters.
 - **Features**: Breaks query strings into readable lines. Supports custom schemes and optional hash fragments.
 - **Try it**: [Launch URL Pretty Print](./pretty/)
 
+### 4. [URL Encode / Decode](./codec/) 🔤
+Encode or decode URLs, query strings, and text instantly.
+- **Features**: Encode/decode via `encodeURIComponent` / `decodeURIComponent`, handles `+` as space on decode.
+- **Try it**: [Launch URL Encode / Decode](./codec/)
+
 ## 🚀 Getting Started
 
 These tools are static web applications and can be hosted on GitHub Pages or any static hosting service.

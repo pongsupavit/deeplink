@@ -51,6 +51,13 @@ window.GLOBAL_SVGS = {
                 path: 'pretty/',
                 emoji: '🧾',
                 description: 'Pretty print long URLs into readable, line-by-line parameters.'
+            },
+            {
+                id: 'codec',
+                name: 'URL Encode / Decode',
+                path: 'codec/',
+                emoji: '🔤',
+                description: 'Encode or decode URLs, query strings, and text instantly.'
             }
         ],
         resolvePath: function (relativePath) {
