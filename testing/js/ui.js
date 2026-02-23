@@ -239,6 +239,21 @@ export const undoDeletion = () => {
     setStatus("Restored deleted link.", "Undo", "ready");
 };
 
+const shortenForStatus = (value, max = 120) => {
+    if (value.length <= max) return value;
+    return `${value.slice(0, max)}...`;
+};
+
+const tryOpenByAnchor = (value) => {
+    const link = document.createElement("a");
+    link.href = value;
+    link.rel = "noopener noreferrer";
+    link.style.display = "none";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
+
 export const openLink = (inputEl) => {
     const value = inputEl.value.trim();
     if (!value) {
@@ -259,7 +274,7 @@ export const openLink = (inputEl) => {
     const index = row ? Number(row.dataset.index || "0") : 0;
     const label = `Link ${index + 1}`;
 
-    setStatus(`Attempting to open (${validation.type}): <span>${value}</span>`, "Working", "working");
+    setStatus(`Attempting to open (${validation.type}): <span>${shortenForStatus(value)}</span>`, "Working", "working");
 
     const shouldShowQr = isDesktop(DESKTOP_QUERY) && validation.type === "URL";
     if (shouldShowQr) {
@@ -269,7 +284,13 @@ export const openLink = (inputEl) => {
     }
 
     try {
-        window.location.href = value;
+        // Use an anchor click first for better mobile compatibility with long deep links.
+        tryOpenByAnchor(value);
+        setTimeout(() => {
+            if (document.visibilityState === "visible") {
+                window.location.assign(value);
+            }
+        }, 250);
     } catch {
         setStatus("This link could not be opened by the browser.", "Error", "error");
     }
