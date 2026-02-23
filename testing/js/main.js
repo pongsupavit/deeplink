@@ -8,6 +8,7 @@ import { closeQrModal, downloadQrCode } from './qr.js';
 const buildEncodedQuery = (values) => values
     .map((value, index) => `link${index + 1}=${encodeURIComponent(value)}`)
     .join("&");
+let suppressClickUntil = 0;
 
 
 const handleShare = async () => {
@@ -128,6 +129,8 @@ DOM.linksList().addEventListener("input", e => {
 });
 
 DOM.linksList().addEventListener("click", e => {
+    if (Date.now() < suppressClickUntil) return;
+
     const row = e.target.closest(".link-row");
     if (!row) return;
 
@@ -135,6 +138,20 @@ DOM.linksList().addEventListener("click", e => {
 
     const inputEl = row.querySelector(".link-url");
     if (!state.editMode && inputEl.classList.contains("is-locked")) openLink(inputEl);
+});
+
+DOM.linksList().addEventListener("touchend", e => {
+    if (state.editMode) return;
+
+    const row = e.target.closest(".link-row");
+    if (!row || e.target.closest(".link-remove")) return;
+
+    const inputEl = row.querySelector(".link-url");
+    if (!inputEl || !inputEl.classList.contains("is-locked")) return;
+
+    e.preventDefault();
+    suppressClickUntil = Date.now() + 500;
+    openLink(inputEl);
 });
 
 DOM.linksList().addEventListener("keydown", e => {

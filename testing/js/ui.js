@@ -248,10 +248,18 @@ const tryOpenByAnchor = (value) => {
     const link = document.createElement("a");
     link.href = value;
     link.rel = "noopener noreferrer";
-    link.style.display = "none";
+    link.target = "_self";
+    link.style.position = "fixed";
+    link.style.left = "-9999px";
+    link.style.top = "0";
+    link.style.width = "1px";
+    link.style.height = "1px";
+    link.style.opacity = "0";
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link);
+    window.setTimeout(() => {
+        if (link.parentNode) link.parentNode.removeChild(link);
+    }, 1000);
 };
 
 export const openLink = (inputEl) => {
@@ -275,8 +283,7 @@ export const openLink = (inputEl) => {
     const label = `Link ${index + 1}`;
 
     setStatus(`Attempting to open (${validation.type}): <span>${shortenForStatus(value)}</span>`, "Working", "working");
-
-    const shouldShowQr = isDesktop(DESKTOP_QUERY) && validation.type === "URL";
+    const shouldShowQr = isDesktop(DESKTOP_QUERY);
     if (shouldShowQr) {
         const htmlLabel = `<span data-icon="LINK" class="qr-text-icon"></span> ${index + 1}: ${value}`;
         openQrModal(value, `Scan ${label}`, htmlLabel, setStatus);
@@ -284,13 +291,9 @@ export const openLink = (inputEl) => {
     }
 
     try {
-        // Use an anchor click first for better mobile compatibility with long deep links.
+        // Use anchor navigation consistently across mobile and desktop.
         tryOpenByAnchor(value);
-        setTimeout(() => {
-            if (document.visibilityState === "visible") {
-                window.location.assign(value);
-            }
-        }, 250);
+        setStatus(`${label} opening via anchor...`, "Working", "working");
     } catch {
         setStatus("This link could not be opened by the browser.", "Error", "error");
     }
