@@ -1,4 +1,4 @@
-import { DOM, SVGS, MAX_LINKS } from './constants.js';
+import { DOM, SVGS, MAX_LINKS, DESKTOP_QUERY } from './constants.js';
 import { state, updateState } from './state.js';
 import { validateLink, autosizeTextarea, isDesktop, trackEvent } from './utils.js';
 import { openQrModal } from './qr.js';
@@ -261,7 +261,8 @@ export const openLink = (inputEl) => {
 
     setStatus(`Attempting to open (${validation.type}): <span>${value}</span>`, "Working", "working");
 
-    if (isDesktop("(min-width: 700px)")) {
+    const shouldShowQr = isDesktop(DESKTOP_QUERY) && validation.type === "URL";
+    if (shouldShowQr) {
         const htmlLabel = `<span data-icon="LINK" class="qr-text-icon"></span> ${index + 1}: ${value}`;
         openQrModal(value, `Scan ${label}`, htmlLabel, setStatus);
         return;

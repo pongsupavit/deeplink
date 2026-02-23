@@ -5,6 +5,9 @@ import { setStatus, refreshUI, getLinkInputs, getRows, updateValidationState, lo
 import { closeQrModal, downloadQrCode } from './qr.js';
 
 // --- Core Actions ---
+const buildEncodedQuery = (values) => values
+    .map((value, index) => `link${index + 1}=${encodeURIComponent(value)}`)
+    .join("&");
 
 
 const handleShare = async () => {
@@ -13,8 +16,7 @@ const handleShare = async () => {
     if (values.some(v => !validateLink(v).ok)) return setStatus("Invalid link format.", "Error", "error");
 
     const url = new URL(window.location.href);
-    url.search = "";
-    values.forEach((v, i) => url.searchParams.set(`link${i + 1}`, v));
+    url.search = buildEncodedQuery(values);
 
     try {
         trackEvent("testing_page_share");
@@ -77,8 +79,7 @@ const saveEditMode = () => {
     }
 
     const url = new URL(window.location.href);
-    url.search = "";
-    values.forEach((v, i) => url.searchParams.set(`link${i + 1}`, v));
+    url.search = buildEncodedQuery(values);
     window.history.replaceState({}, "", url.toString());
 
     setStatus("Updated.", "Ready", "ready");
