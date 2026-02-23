@@ -189,9 +189,15 @@ export const refreshUI = () => {
     }
 
     if (!editMode) {
-        inputs.forEach(inputEl => lockIfValid(inputEl));
+        inputs.forEach(inputEl => {
+            lockIfValid(inputEl);
+            autosizeTextarea(inputEl);
+        });
     } else {
-        inputs.forEach(inputEl => setLockState(inputEl, false));
+        inputs.forEach(inputEl => {
+            setLockState(inputEl, false);
+            autosizeTextarea(inputEl);
+        });
     }
 
     updateStatusInvalidSummary();

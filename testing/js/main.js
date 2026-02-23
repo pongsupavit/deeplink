@@ -9,6 +9,8 @@ const buildEncodedQuery = (values) => values
     .map((value, index) => `link${index + 1}=${encodeURIComponent(value)}`)
     .join("&");
 let suppressClickUntil = 0;
+const TOUCH_TAP_MAX_MOVE = 10;
+let touchTapState = null;
 
 
 const handleShare = async () => {
@@ -143,15 +145,55 @@ DOM.linksList().addEventListener("click", e => {
 DOM.linksList().addEventListener("touchend", e => {
     if (state.editMode) return;
 
+    const touch = e.changedTouches && e.changedTouches[0];
+    if (!touchTapState || !touch) return;
+
+    const deltaX = Math.abs(touch.clientX - touchTapState.startX);
+    const deltaY = Math.abs(touch.clientY - touchTapState.startY);
+    const movedTooMuch = deltaX > TOUCH_TAP_MAX_MOVE || deltaY > TOUCH_TAP_MAX_MOVE;
     const row = e.target.closest(".link-row");
-    if (!row || e.target.closest(".link-remove")) return;
+
+    if (movedTooMuch || !row || row !== touchTapState.row || e.target.closest(".link-remove")) {
+        touchTapState = null;
+        return;
+    }
 
     const inputEl = row.querySelector(".link-url");
-    if (!inputEl || !inputEl.classList.contains("is-locked")) return;
+    if (!inputEl || !inputEl.classList.contains("is-locked")) {
+        touchTapState = null;
+        return;
+    }
 
     e.preventDefault();
     suppressClickUntil = Date.now() + 500;
     openLink(inputEl);
+    touchTapState = null;
+});
+
+DOM.linksList().addEventListener("touchstart", e => {
+    if (state.editMode) return;
+    const touch = e.touches && e.touches[0];
+    const row = e.target.closest(".link-row");
+    if (!touch || !row || e.target.closest(".link-remove")) {
+        touchTapState = null;
+        return;
+    }
+    touchTapState = { row, startX: touch.clientX, startY: touch.clientY };
+});
+
+DOM.linksList().addEventListener("touchmove", e => {
+    if (!touchTapState) return;
+    const touch = e.touches && e.touches[0];
+    if (!touch) return;
+    const deltaX = Math.abs(touch.clientX - touchTapState.startX);
+    const deltaY = Math.abs(touch.clientY - touchTapState.startY);
+    if (deltaX > TOUCH_TAP_MAX_MOVE || deltaY > TOUCH_TAP_MAX_MOVE) {
+        touchTapState = null;
+    }
+});
+
+DOM.linksList().addEventListener("touchcancel", () => {
+    touchTapState = null;
 });
 
 DOM.linksList().addEventListener("keydown", e => {
@@ -179,6 +221,10 @@ window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () 
     if (getPreferredTheme() === "auto") applyTheme("auto");
 });
 
+window.addEventListener("resize", () => {
+    getLinkInputs().forEach(autosizeTextarea);
+});
+
 document.addEventListener("keydown", e => {
     if (e.key === "Escape") closeQrModal();
 
@@ -201,7 +247,8 @@ const getDragAfterElement = (y) => {
 };
 
 DOM.linksList().addEventListener("pointerdown", e => {
-    if (!state.editMode || !DOM.linksList().classList.contains("is-reorder") || e.target.closest("button")) return;
+    const dragHandle = e.target.closest(".drag-hint");
+    if (!state.editMode || !DOM.linksList().classList.contains("is-reorder") || e.target.closest("button") || !dragHandle) return;
     const row = e.target.closest(".link-row");
     if (!row) return;
 
