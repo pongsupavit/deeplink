@@ -580,9 +580,12 @@ body.is-reordering {
   }
 
   .link-row,
-  .links-list.is-multi .link-row,
-  .links-list:not(.is-multi) .link-row {
+  .links-list.is-multi .link-row {
     grid-template-columns: var(--tt-index-w) minmax(0, 1fr) var(--tt-action-w);
+  }
+
+  .links-list:not(.is-multi) .link-row {
+    grid-template-columns: minmax(0, 1fr) var(--tt-action-w);
   }
 
   .field.is-view .links-list.is-multi .link-row {
@@ -620,4 +623,42 @@ body.is-reordering {
     flex: 1 1 46%;
     min-width: 0;
   }
+}
+
+/* Final single-link layout fix (authoritative override) */
+.links-list:not(.is-multi) .link-row {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.links-list:not(.is-multi) .link-index,
+.links-list:not(.is-multi) .drag-hint {
+  display: none !important;
+}
+
+.links-list:not(.is-multi) .input-wrap {
+  flex: 1 1 calc(100% - var(--tt-action-w) - 10px);
+  min-width: 0 !important;
+  width: auto !important;
+}
+
+.links-list:not(.is-multi) .link-url {
+  width: 100% !important;
+  min-width: 0 !important;
+  display: block;
+}
+
+.links-list:not(.is-multi) .link-remove {
+  flex: 0 0 var(--tt-action-w);
+  width: var(--tt-action-w);
+}
+
+.links-list:not(.is-multi) .link-error {
+  flex: 0 0 100%;
+}
+
+.field.is-view .links-list:not(.is-multi) .link-row {
+  display: flex !important;
 }
